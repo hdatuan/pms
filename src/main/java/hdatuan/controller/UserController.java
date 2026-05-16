@@ -12,6 +12,8 @@ import javax.servlet.http.HttpSession;
 
 import hdatuan.service.UserService;
 import hdatuan.entity.User;
+import hdatuan.enums.UserRole;
+
 
 @WebServlet( name = "userController", urlPatterns = {"/user", "/user-delete"})
 public class UserController extends HttpServlet {
@@ -20,26 +22,27 @@ public class UserController extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
+
+		HttpSession session = req.getSession(false);
+		User sessionUser = session != null ? (User) session.getAttribute("user") : null;
+
 		if ( req.getServletPath().equals("/user-delete") ) {
-			HttpSession session = req.getSession(false);
-			User user = session != null ? (User) session.getAttribute("user") : null;
-			if ( user == null || user.getRoleID() != 1 ) {
+			if ( sessionUser == null || sessionUser.getRoleID() != UserRole.ADMIN.getId() ) {
 				resp.sendRedirect(req.getContextPath() + "/404");
 				return;
 			}
-			int user_id =  Integer.parseInt(req.getParameter("id"));
-			
+			int user_id = Integer.parseInt(req.getParameter("id"));
 			userService.deleteUser(user_id);
-			
 			resp.sendRedirect(req.getContextPath() + "/user");
 			return;
 		}
-		
-		List<User> userList = userService.getAllUsers();		
-		
+
+		List<User> userList = userService.getAllUsers();
+		boolean isAdmin = sessionUser != null && sessionUser.getRoleID() == UserRole.ADMIN.getId();
+
 		req.setAttribute("users", userList);
-		
+		req.setAttribute("isAdmin", isAdmin);
+
 		req.getRequestDispatcher("/WEB-INF/views/user-table.jsp").forward(req, resp);
 	}
 	

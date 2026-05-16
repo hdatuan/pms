@@ -15,6 +15,8 @@ import hdatuan.service.RoleService;
 import hdatuan.service.UserService;
 import hdatuan.entity.Role;
 import hdatuan.entity.User;
+import hdatuan.enums.UserRole;
+
 @WebServlet(name="userAddController", urlPatterns= {"/user-add", "/user-edit"})
 public class UserAddController extends HttpServlet {
 	
@@ -28,7 +30,7 @@ public class UserAddController extends HttpServlet {
 		int roleId = user.getRoleID();
 		String servletPath = req.getServletPath();
 	
-		if ( roleId != 1 && (servletPath.equals("/user-edit") || servletPath.equals("/user-add") ) ) {
+		if ( roleId != UserRole.ADMIN.getId() && (servletPath.equals("/user-edit") || servletPath.equals("/user-add") ) ) {
 			resp.sendRedirect(req.getContextPath() + "/404");
 			return;
 		}

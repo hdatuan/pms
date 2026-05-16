@@ -133,7 +133,7 @@
                         <h4 class="page-title">Danh sách thành viên</h4>
                     </div>
                     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12 text-right">
-                        <c:if test="${sessionScope.user.roleID == 1}">
+                        <c:if test="${isAdmin}">
                             <a href="${ctx}/user-add" class="btn btn-sm btn-success">Thêm mới</a>
                         </c:if>
                     </div>
@@ -162,7 +162,7 @@
 	                                    			<td> ${item.email}</td>
 	                                    			<td> ${item.roleDescription}</td>
 	                                    			<td>
-	                                    				<c:if test="${sessionScope.user.roleID == 1}">
+	                                    				<c:if test="${isAdmin}">
 	                                                <a href="${ctx}/user-edit?id=${item.id}" class="btn btn-sm btn-primary">Sửa</a>
 	                                                <a href="${ctx}/user-delete?id=${item.id}" class="btn btn-sm btn-danger"
 	                                                		onclick="return confirm('Bạn có chắc muốn xóa người dùng này không?');">Xóa</a>

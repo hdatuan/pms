@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSession;
 
 import hdatuan.service.RoleService;
 import hdatuan.entity.User;
+import hdatuan.enums.UserRole;
+
 
 @WebServlet(name = "roleDeleteServlet", urlPatterns = {"/role-delete"})
 public class RoleDeleteController extends HttpServlet {
@@ -24,7 +26,7 @@ public class RoleDeleteController extends HttpServlet {
         HttpSession session = req.getSession(false);
         User user = (User) session.getAttribute("user");
 
-        if (user == null || user.getRoleID() != 1) {
+        if (user == null || user.getRoleID() != UserRole.ADMIN.getId()) {
         	resp.sendRedirect(req.getContextPath() + "/404");
             return;
         }
