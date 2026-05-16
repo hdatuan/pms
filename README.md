@@ -82,8 +82,8 @@ The project strictly follows the **Standard MVC (Model-View-Controller)** patter
 ### Installation
 1.  **Clone the repository**
     ```sh
-    git clone https://github.com/hdatuan/project_management_system.git
-    cd project_management_system
+    git clone https://github.com/hdatuan/pms.git
+    cd pms
     ```
 
 2.  **Database Setup**
