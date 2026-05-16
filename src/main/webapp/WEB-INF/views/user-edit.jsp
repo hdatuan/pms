@@ -182,6 +182,7 @@
                       <input
                       	name="password"
                         type="password"
+                        placeholder="Để trống nếu không muốn đổi mật khẩu"
                         class="form-control form-control-line"
                       />
                     </div>
@@ -203,7 +204,7 @@
                       <select name="role-id" class="form-control form-control-line">
                       	<c:forEach var = "item" items="${roles}">
     		                    <option value="${item.id}" 
-    		                    		<c:if test="${editUser != null && item.id == editUser.roleID}">
+    		                    		<c:if test="${editUser != null and item.id == editUser.roleID}">
     		                    			selected
     		                    		</c:if>>
     		                    ${item.description}
@@ -213,7 +214,14 @@
                     </div>
                   </div>
                   <c:if test="${isDone}">
-				    <span id="notifyMessage" style="color:${isSuccess ? 'green' : 'red'};">
+				    <c:choose>
+				        <c:when test="${isSuccess}">
+				            <span id="notifyMessage" class="text-success">
+				        </c:when>
+				        <c:otherwise>
+				            <span id="notifyMessage" class="text-danger">
+				        </c:otherwise>
+				    </c:choose>
 				        ${message}
 				    </span>
 				    <script>
@@ -222,7 +230,7 @@
 				            if (msg) {
 				                msg.style.display = "none";
 				            }
-				        }, 3000); 
+				        }, 3000);
 				    </script>
 				</c:if>
                   <div class="form-group">

@@ -100,6 +100,30 @@ public class UserRepository {
 	}
 
 	
+	// Dùng khi admin edit user nhưng để trống ô mật khẩu — giữ nguyên mật khẩu cũ
+	public int updateUserWithoutPassword(int id, String fullName, String email, int roleId) {
+	    int row = 0;
+	    String query = "UPDATE users "
+	                 + "SET fullname = ?, email = ?, role_id = ? "
+	                 + "WHERE id = ?";
+	    try (Connection connection = MySQLConfig.getConnection()) {
+	        if (connection == null) {
+	            throw new RuntimeException("Database disconnected");
+	        }
+	        try (PreparedStatement statement = connection.prepareStatement(query)) {
+	            statement.setString(1, fullName);
+	            statement.setString(2, email);
+	            statement.setInt(3, roleId);
+	            statement.setInt(4, id);
+	            row = statement.executeUpdate();
+	        }
+	    } catch (Exception e) {
+	        System.out.println("Error: " + e.getMessage());
+	    }
+	    return row;
+	}
+
+	
 	public int insertUser(String fullName, String email, String password, int roleId) {
 		int row = 0;
 		String query = "INSERT INTO users ( email, password, fullname, role_id) "

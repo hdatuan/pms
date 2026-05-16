@@ -18,6 +18,10 @@ public class UserService {
 	}
 	
 	public boolean updateUser(int id, String fullName, String email, String password, int roleId) {
+		if (password == null || password.trim().isEmpty()) {
+			// Không đổi mật khẩu — giữ nguyên mật khẩu cũ trong DB
+			return userRepository.updateUserWithoutPassword(id, fullName, email, roleId) > 0;
+		}
 		return userRepository.updateUser(id, fullName, email, password, roleId) > 0;
 	}
 	

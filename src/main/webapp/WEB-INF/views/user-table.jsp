@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
@@ -133,7 +133,9 @@
                         <h4 class="page-title">Danh sách thành viên</h4>
                     </div>
                     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12 text-right">
-                        <a href="${ctx}/user-add" class="btn btn-sm btn-success">Thêm mới</a>
+                        <c:if test="${sessionScope.user.roleID == 1}">
+                            <a href="${ctx}/user-add" class="btn btn-sm btn-success">Thêm mới</a>
+                        </c:if>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
@@ -160,7 +162,7 @@
 	                                    			<td> ${item.email}</td>
 	                                    			<td> ${item.roleDescription}</td>
 	                                    			<td>
-	                                    				<c:if test="${user.id == 1}">
+	                                    				<c:if test="${sessionScope.user.roleID == 1}">
 	                                                <a href="${ctx}/user-edit?id=${item.id}" class="btn btn-sm btn-primary">Sửa</a>
 	                                                <a href="${ctx}/user-delete?id=${item.id}" class="btn btn-sm btn-danger"
 	                                                		onclick="return confirm('Bạn có chắc muốn xóa người dùng này không?');">Xóa</a>
