@@ -24,3 +24,4 @@ Khi nhận một Task mới từ bạn, tôi sẽ tuân thủ các bước:
 - Phân tách rõ ràng: Request vào `Controller` -> Xử lý ở `Service` -> Giao tiếp DB ở `Repository` -> Trả ra `JSP`.
 - Không lạm dụng việc query SQL trực tiếp trong Controller/Service.
 - Phản hồi ngắn gọn, tập trung vào code, có tính scannable.
+- Không dùng các thư viện ngoài stack hiện tại nếu chưa được sự đồng ý (ví dụ: không tự ý cài thêm các thư viện JSON hoặc Utilities lạ qua Maven).
