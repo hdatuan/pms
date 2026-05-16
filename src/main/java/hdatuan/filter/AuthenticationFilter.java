@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebFilter( filterName="authenFilter", urlPatterns = {"/*"})
+@WebFilter(filterName="authenticationFilter", urlPatterns = {"/*"})
 public class AuthenticationFilter implements Filter {
 
 	@Override

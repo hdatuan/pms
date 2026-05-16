@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 import hdatuan.service.RoleService;
 import hdatuan.entity.Role;
 import hdatuan.entity.User;
-import hdatuan.enums.UserRole;
+
 
 @WebServlet(name = "roleAddEditServlet", urlPatterns = { "/role-add", "/role-edit" })
 public class RoleAddController extends HttpServlet {
@@ -62,14 +62,6 @@ public class RoleAddController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
-        HttpSession session = req.getSession(false);
-        User user = (User) (session != null ? session.getAttribute("user") : null);
-
-        if (user == null || user.getRoleID() != UserRole.ADMIN.getId()) {
-            resp.sendRedirect(req.getContextPath() + "/403");
-            return;
-        }
 
         req.setAttribute("isDone", false);
         req.setAttribute("isSuccess", false);

@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import hdatuan.enums.UserRole;
 import hdatuan.service.UserService;
 import hdatuan.entity.User;
-import hdatuan.enums.UserRole;
 
 @WebServlet(name = "userController", urlPatterns = { "/user", "/user-delete" })
 public class UserController extends HttpServlet {
@@ -26,10 +26,6 @@ public class UserController extends HttpServlet {
 		User sessionUser = session != null ? (User) session.getAttribute("user") : null;
 
 		if (req.getServletPath().equals("/user-delete")) {
-			if (sessionUser == null || sessionUser.getRoleID() != UserRole.ADMIN.getId()) {
-				resp.sendRedirect(req.getContextPath() + "/403");
-				return;
-			}
 			int user_id = Integer.parseInt(req.getParameter("id"));
 			userService.deleteUser(user_id);
 			resp.sendRedirect(req.getContextPath() + "/user");
