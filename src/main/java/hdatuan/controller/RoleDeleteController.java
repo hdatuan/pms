@@ -27,7 +27,7 @@ public class RoleDeleteController extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null || user.getRoleID() != UserRole.ADMIN.getId()) {
-        	resp.sendRedirect(req.getContextPath() + "/404");
+        	resp.sendRedirect(req.getContextPath() + "/403");
             return;
         }
 

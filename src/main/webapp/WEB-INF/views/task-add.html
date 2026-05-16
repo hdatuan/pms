@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <base id="ctxBase" href="">
     <script>
-    (function(){var p=window.location.pathname;var idx=p.indexOf('/',1);var ctx=(idx>=0?p.substring(0,idx):'');var b=document.getElementById('ctxBase');if(b)b.href=window.location.origin+ctx+'/';})();
+        (function () { var p = window.location.pathname; var idx = p.indexOf('/', 1); var ctx = (idx >= 0 ? p.substring(0, idx) : ''); var b = document.getElementById('ctxBase'); if (b) b.href = window.location.origin + ctx + '/'; })();
     </script>
     <link rel="icon" type="image/png" sizes="16x16" href="plugins/images/favicon.png">
     <title>Pixel Admin</title>
@@ -29,7 +29,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
@@ -66,21 +66,22 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-top-links navbar-right pull-right">
-	                    <li>
-	                        <div class="dropdown">
-	                            <a class="profile-pic dropdown-toggle" data-toggle="dropdown" href="#"> 
-	                                <img src="plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle" />
-	                                <b class="hidden-xs">${sessionScope.user.fullname}</b>
-	                            </a>
-	                            <ul class="dropdown-menu">
-	                                <li><a href="profile">Thông tin cá nhân</a></li>
-	                                
-	                                <li class="divider"></li>
-	                                <li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
-	                            </ul>
-	                        </div>
-	                    </li>
-	                </ul>
+                    <li>
+                        <div class="dropdown">
+                            <a class="profile-pic dropdown-toggle" data-toggle="dropdown" href="#">
+                                <img src="plugins/images/users/varun.jpg" alt="user-img" width="36"
+                                    class="img-circle" />
+                                <b class="hidden-xs">${sessionScope.user.fullname}</b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="profile">Thông tin cá nhân</a></li>
+
+                                <li class="divider"></li>
+                                <li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
             </div>
             <!-- /.navbar-header -->
             <!-- /.navbar-top-links -->
@@ -91,32 +92,32 @@
             <div class="sidebar-nav navbar-collapse slimscrollsidebar">
                 <ul class="nav" id="side-menu">
                     <li style="padding: 10px 0 0;">
-                        <a href="home" class="waves-effect"><i class="fa fa-clock-o fa-fw"
-                                aria-hidden="true"></i><span class="hide-menu">Dashboard</span></a>
+                        <a href="home" class="waves-effect"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i><span
+                                class="hide-menu">Dashboard</span></a>
                     </li>
                     <li>
-                        <a href="user" class="waves-effect"><i class="fa fa-user fa-fw"
-                                aria-hidden="true"></i><span class="hide-menu">Thành viên</span></a>
+                        <a href="user" class="waves-effect"><i class="fa fa-user fa-fw" aria-hidden="true"></i><span
+                                class="hide-menu">Thành viên</span></a>
                     </li>
                     <li>
-                        <a href="role" class="waves-effect"><i class="fa fa-modx fa-fw"
-                                aria-hidden="true"></i><span class="hide-menu">Quyền</span></a>
+                        <a href="role" class="waves-effect"><i class="fa fa-modx fa-fw" aria-hidden="true"></i><span
+                                class="hide-menu">Quyền</span></a>
                     </li>
                     <li>
                         <a href="groupwork" class="waves-effect"><i class="fa fa-table fa-fw"
                                 aria-hidden="true"></i><span class="hide-menu">Dự án</span></a>
                     </li>
                     <li>
-                        <a href="task" class="waves-effect"><i class="fa fa-table fa-fw"
-                                aria-hidden="true"></i><span class="hide-menu">Công việc</span></a>
+                        <a href="task" class="waves-effect"><i class="fa fa-table fa-fw" aria-hidden="true"></i><span
+                                class="hide-menu">Công việc</span></a>
                     </li>
                     <li>
-                        <a href="blank" class="waves-effect"><i class="fa fa-columns fa-fw"
-                                aria-hidden="true"></i><span class="hide-menu">Blank Page</span></a>
+                        <a href="blank" class="waves-effect"><i class="fa fa-columns fa-fw" aria-hidden="true"></i><span
+                                class="hide-menu">Blank Page</span></a>
                     </li>
                     <li>
-                        <a href="404" class="waves-effect"><i class="fa fa-info-circle fa-fw"
-                                aria-hidden="true"></i><span class="hide-menu">Error 404</span></a>
+                        <a href="403" class="waves-effect"><i class="fa fa-info-circle fa-fw"
+                                aria-hidden="true"></i><span class="hide-menu">Error 403</span></a>
                     </li>
                 </ul>
             </div>
@@ -168,14 +169,14 @@
                                     <label class="col-md-12">Ngày bắt đầu</label>
                                     <div class="col-md-12">
                                         <input type="text" placeholder="dd/MM/yyyy"
-                                            class="form-control form-control-line"> 
+                                            class="form-control form-control-line">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Ngày kết thúc</label>
                                     <div class="col-md-12">
                                         <input type="text" placeholder="dd/MM/yyyy"
-                                            class="form-control form-control-line"> 
+                                            class="form-control form-control-line">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -192,7 +193,9 @@
                 <!-- /.row -->
             </div>
             <!-- /.container-fluid -->
-            <footer class="footer text-center"><script>document.write(new Date().getFullYear())</script> &copy; hdatuan</footer>
+            <footer class="footer text-center">
+                <script>document.write(new Date().getFullYear())</script> &copy; hdatuan
+            </footer>
         </div>
         <!-- /#page-wrapper -->
     </div>

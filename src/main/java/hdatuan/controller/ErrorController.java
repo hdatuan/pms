@@ -8,14 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name="errorController", urlPatterns={"/404"})
-public class ErrorController extends HttpServlet{
+@WebServlet(name = "errorController", urlPatterns = { "/403" })
+public class ErrorController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		req.getRequestDispatcher("/WEB-INF/views/404.jsp").forward(req, resp);
+
+		req.getRequestDispatcher("/WEB-INF/views/403.jsp").forward(req, resp);
 	}
 }
-
-
-

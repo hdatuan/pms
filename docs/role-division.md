@@ -12,7 +12,7 @@ Sau khi quét qua bộ mã nguồn, đây là cách hệ thống đang xử lý 
   ```java
   // Bên trong UserAddController.java, RoleAddController.java...
   if (user == null || user.getRoleID() != 1) {
-      resp.sendRedirect(req.getContextPath() + "/404");
+      resp.sendRedirect(req.getContextPath() + "/403");
       return;
   }
   ```
@@ -60,7 +60,7 @@ int role = user.getRoleID();
 
 if (path.startsWith("/user-add") || path.startsWith("/role-edit")) {
     if (role != RoleConstants.ROLE_ADMIN) {
-        resp.sendRedirect("/403"); // Nên dùng 403 (Forbidden) thay vì 404 (Not Found)
+        resp.sendRedirect("/403"); // Nên dùng 403 (Forbidden) thay vì 403 (Not Found)
         return;
     }
 }

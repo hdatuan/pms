@@ -10,8 +10,7 @@ import hdatuan.entity.Role;
 import hdatuan.entity.User;
 import hdatuan.enums.UserRole;
 
-
-@WebServlet(name = "roleAddEditServlet", urlPatterns = {"/role-add", "/role-edit"})
+@WebServlet(name = "roleAddEditServlet", urlPatterns = { "/role-add", "/role-edit" })
 public class RoleAddController extends HttpServlet {
 
     private RoleService roleService = new RoleService();
@@ -51,7 +50,8 @@ public class RoleAddController extends HttpServlet {
 
             int roleId = Integer.parseInt(roleIdStr);
             isSuccess = roleService.updateRole(roleId, roleName, roleDescription);
-            req.setAttribute("message", isSuccess ? "Cập nhật quyền thành công!" : "Cập nhật thất bại, vui lòng thử lại!");
+            req.setAttribute("message",
+                    isSuccess ? "Cập nhật quyền thành công!" : "Cập nhật thất bại, vui lòng thử lại!");
         }
 
         req.setAttribute("isDone", isDone);
@@ -67,7 +67,7 @@ public class RoleAddController extends HttpServlet {
         User user = (User) (session != null ? session.getAttribute("user") : null);
 
         if (user == null || user.getRoleID() != UserRole.ADMIN.getId()) {
-            resp.sendRedirect(req.getContextPath() + "/404");
+            resp.sendRedirect(req.getContextPath() + "/403");
             return;
         }
 
@@ -100,7 +100,6 @@ public class RoleAddController extends HttpServlet {
         }
     }
 
-
     private void forwardByPath(HttpServletRequest req, HttpServletResponse resp, String path)
             throws ServletException, IOException {
         if (path.equals("/role-add")) {
@@ -110,6 +109,3 @@ public class RoleAddController extends HttpServlet {
         }
     }
 }
-
-
-

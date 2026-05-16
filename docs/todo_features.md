@@ -19,4 +19,4 @@ Một số module cốt lõi hiện tại mới chỉ ở mức sơ khai, thiế
 ### 3. Sửa đổi và Cải thiện Code (Code Quality & Refactoring)
 - **Quản lý người dùng**: Còn thiếu tính năng chỉnh sửa và xóa User (Edit/Delete User) ở phía quản trị viên.
 - **Tối ưu hóa Controller**: Các Controller đang bị chia nhỏ ra thành quá nhiều file (ví dụ `RoleController`, `RoleAddController`, `RoleDeleteController`). Nên gom lại (Refactor) thành một `RoleServlet` duy nhất và dùng tham số URL hoặc phương thức HTTP phù hợp để quản lý.
-- **Xử lý ngoại lệ (Exception Handling)**: Cần chuẩn hóa việc hiển thị trang lỗi 404, 500 thay vì để lộ stacktrace.
+- **Xử lý ngoại lệ (Exception Handling)**: Cần chuẩn hóa việc hiển thị trang lỗi 403, 500 thay vì để lộ stacktrace.

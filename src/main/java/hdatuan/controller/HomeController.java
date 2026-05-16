@@ -49,7 +49,7 @@ public class HomeController extends HttpServlet {
 			req.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(req, resp);
 		} catch (Exception e) {
 			e.printStackTrace();
-			resp.sendRedirect(req.getContextPath() + "/404");
+			resp.sendRedirect(req.getContextPath() + "/403");
 		}
 	}
 }
