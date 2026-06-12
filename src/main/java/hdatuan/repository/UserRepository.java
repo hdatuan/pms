@@ -126,23 +126,30 @@ public class UserRepository {
 	
 	public int insertUser(String fullName, String email, String password, int roleId) {
 		int row = 0;
-		String query = "INSERT INTO users ( email, password, fullname, role_id) "
-				+ "VALUES ( ?, ?, ?, ?)";
+		String checkQuery = "SELECT COUNT(*) AS count FROM users WHERE email = ?";
+		String insertQuery = "INSERT INTO users (email, password, fullname, role_id) VALUES (?, ?, ?, ?)";
+		
 		try (Connection connection = MySQLConfig.getConnection()) {
 			if (connection == null) {
 				throw new RuntimeException("Database disconnected");
 			}
-			// Check if user already exists (findAll uses its own connection and closes it)
-			List<User> existingUsers = this.findAll();
-			for (User user : existingUsers) {
-				if (user.getFullname().equals(fullName)) return 0;
+			
+			// Kiểm tra email đã tồn tại hay chưa
+			try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+				checkStatement.setString(1, email);
+				try (ResultSet resultSet = checkStatement.executeQuery()) {
+					if (resultSet.next() && resultSet.getInt("count") > 0) {
+						return 0; // Email đã tồn tại
+					}
+				}
 			}
-			try (PreparedStatement statement = connection.prepareStatement(query)) {
-				statement.setString(1, email);
-				statement.setString(2, password);
-				statement.setString(3, fullName);
-				statement.setInt(4, roleId);
-				row = statement.executeUpdate();
+			
+			try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
+				insertStatement.setString(1, email);
+				insertStatement.setString(2, password);
+				insertStatement.setString(3, fullName);
+				insertStatement.setInt(4, roleId);
+				row = insertStatement.executeUpdate();
 			}
 		} catch (Exception e) {
 			System.out.println("Error : " + e.getMessage());
