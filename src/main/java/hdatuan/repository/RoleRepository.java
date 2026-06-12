@@ -16,19 +16,22 @@ public class RoleRepository {
 	    String checkQuery = "SELECT COUNT(*) AS count FROM users WHERE role_id = ?";
 	    String deleteQuery = "DELETE FROM roles WHERE id = ?";
 
-	    try (Connection connection = MySQLConfig.getConnection()) {
-	        // Kiểm tra xem role có đang được dùng không
+	    try (
+	        Connection connection = MySQLConfig.getConnection();
 	        PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
+	    ) {
 	        checkStmt.setInt(1, roleId);
-	        ResultSet rs = checkStmt.executeQuery();
-	        if (rs.next() && rs.getInt("count") > 0) {
-	            System.out.println("Không thể xóa role: đang có user sử dụng!");
-	            return 0;
+	        try (ResultSet rs = checkStmt.executeQuery()) {
+	            if (rs.next() && rs.getInt("count") > 0) {
+	                System.out.println("Không thể xóa role: đang có user sử dụng!");
+	                return 0;
+	            }
 	        }
 
-	        PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery);
-	        deleteStmt.setInt(1, roleId);
-	        row = deleteStmt.executeUpdate();
+	        try (PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
+	            deleteStmt.setInt(1, roleId);
+	            row = deleteStmt.executeUpdate();
+	        }
 	    } catch (Exception e) {
 	        System.out.println("Error: " + e.getMessage());
 	    }
@@ -59,28 +62,26 @@ public class RoleRepository {
 
 	public List<Role> findAll() {
 		List<Role> roleList = new ArrayList<>();
-		
 		String query = "SELECT * FROM roles";
 		
-		Connection connection =  MySQLConfig.getConnection();
-		if ( connection == null ) {
-			throw new RuntimeException("Database Disconnected");
-		}
-		
-		try {
-			PreparedStatement statement = connection.prepareStatement(query);
-			
-			ResultSet resultSet = statement.executeQuery();
-			
-			while ( resultSet.next() ) {
-				Role role = new Role();
-				role.setId(resultSet.getInt("id"));
-				role.setName(resultSet.getString("name"));
-				role.setDescription(resultSet.getString("description"));
-				roleList.add(role);
+		try (
+			Connection connection = MySQLConfig.getConnection();
+		) {
+			if ( connection == null ) {
+				throw new RuntimeException("Database Disconnected");
 			}
-			
-			
+			try (
+				PreparedStatement statement = connection.prepareStatement(query);
+				ResultSet resultSet = statement.executeQuery();
+			) {
+				while ( resultSet.next() ) {
+					Role role = new Role();
+					role.setId(resultSet.getInt("id"));
+					role.setName(resultSet.getString("name"));
+					role.setDescription(resultSet.getString("description"));
+					roleList.add(role);
+				}
+			}
 		} catch ( Exception e ) {
 			System.out.println("Error " + e.getMessage());
 		}
@@ -90,20 +91,14 @@ public class RoleRepository {
 	
 	public int insertRole(String name, String description ) {
 		int rowCount = 0;
-		
 		String query = "INSERT INTO roles( name, description ) VALUES (? , ?)";
 		
-		Connection connection = MySQLConfig.getConnection();
-		
-		if ( connection == null ) {
-			throw new RuntimeException("Database disconnected");
-		}
-	 
-		try {
-			PreparedStatement statement = connection.prepareStatement(query);
-			
-			statement.setString(1, name);
-			statement.setString(2, description);
+		try (
+			Connection connection = MySQLConfig.getConnection();
+		) {
+			if ( connection == null ) {
+				throw new RuntimeException("Database disconnected");
+			}
 			
 			// Check if the role is existed
 			List<Role> insertedRole = this.findAll();
@@ -111,9 +106,11 @@ public class RoleRepository {
 				if ( role.getName().equals(name) ) return 0;
 			}
 			
-			
-			rowCount = statement.executeUpdate();
-			
+			try (PreparedStatement statement = connection.prepareStatement(query)) {
+				statement.setString(1, name);
+				statement.setString(2, description);
+				rowCount = statement.executeUpdate();
+			}
 		} catch ( Exception e ) {
 			System.out.println("Error : " + e.getMessage());
 		}
@@ -129,12 +126,13 @@ public class RoleRepository {
 	        PreparedStatement statement = connection.prepareStatement(query);
 	    ) {
 	        statement.setInt(1, id);
-	        ResultSet rs = statement.executeQuery();
-	        if (rs.next()) {
-	            role = new Role();
-	            role.setId(rs.getInt("id"));
-	            role.setName(rs.getString("name"));
-	            role.setDescription(rs.getString("description"));
+	        try (ResultSet rs = statement.executeQuery()) {
+	            if (rs.next()) {
+	                role = new Role();
+	                role.setId(rs.getInt("id"));
+	                role.setName(rs.getString("name"));
+	                role.setDescription(rs.getString("description"));
+	            }
 	        }
 	    } catch (Exception e) {
 	        System.out.println("Error: " + e.getMessage());
