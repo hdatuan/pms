@@ -1,5 +1,9 @@
+# Đánh giá & Tái cấu trúc Phân quyền (Role Division & Authorization Refactoring)
 
-Tài liệu này đánh giá hiện trạng phân quyền của dự án Project Management System (PMS) và đề xuất các giải pháp để hệ thống bảo mật, dễ bảo trì và chuyên nghiệp hơn.
+> [!NOTE]
+> **Trạng thái thực tế**: Các đề xuất và nâng cấp nêu trong tài liệu này hiện đã được **áp dụng và hoàn thành 100%** trong dự án. Logic phân quyền đã được tập trung tại `AuthorizationFilter`, các ID số cứng được thay bằng Enum `UserRole`, và các Servlet phân mảnh đã được hợp nhất thành công.
+
+Tài liệu này đánh giá hiện trạng phân quyền trước đây của dự án Project Management System (PMS) và các giải pháp đã thực hiện để hệ thống bảo mật, dễ bảo trì và chuyên nghiệp hơn.
 
 ---
 

@@ -55,9 +55,11 @@ Dưới đây là ma trận phân quyền chi tiết cho các chức năng trong
 | Chỉnh sửa dự án | `/groupwork-edit` | ✅ | ✅ | ❌ |
 | Tạo Task (giao việc) | `/task-add` | ✅ | ✅ | ❌ |
 | Chỉnh sửa Task | `/task-edit` | ✅ | ✅ | ❌ |
-| Cập nhật trạng thái Task | *Chưa định nghĩa URL* | ✅ | ✅ | ❌ |
-| Quản lý thành viên dự án (Thêm/Xóa) | *Chưa định nghĩa URL* | ✅ | ✅ | ❌ |
-| Xem tiến độ dự án | *Chưa định nghĩa URL* | ✅ | ✅ | ❌ |
+| Cập nhật trạng thái Task (Admin/Manager) | `/task-edit` | ✅ | ✅ | ❌ |
+| Cập nhật trạng thái Task (Cá nhân) | `/profile-edit` | ✅ | ✅ | ✅ |
+| Xóa Task (hủy tác vụ) | `/task-delete` | ✅ | ✅ | ❌ |
+| Quản lý thành viên dự án | Thông qua giao Task | ✅ | ✅ | ❌ |
+| Xem chi tiết tiến độ dự án | `/groupwork-details` | ✅ | ✅ | ❌ |
 
 ### Nhóm Truy cập Chung
 *Dành cho tất cả người dùng đã đăng nhập hệ thống.*
