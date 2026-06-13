@@ -1,29 +1,49 @@
-# Kiến trúc hệ thống (System Architecture)
+# System Architecture
 
-Dự án PMS tuân thủ chặt chẽ mô hình **MVC (Model - View - Controller)** kết hợp với kiến trúc nhiều lớp (N-Tier Architecture).
+The Project Management System (PMS) strictly adheres to the standard **Model-View-Controller (MVC)** design pattern, combined with a layered **N-Tier Architecture** to decouple responsibilities, simplify testing, and ease maintenance.
 
-## 1. Các Module Chính (Thư mục)
-- `src/main/java/hdatuan/controller/`: Chứa các Servlet đóng vai trò Controller, xử lý HTTP request/response.
-- `src/main/java/hdatuan/service/`: Chứa logic nghiệp vụ (Business logic).
-- `src/main/java/hdatuan/repository/`: Chứa các class thao tác với Database qua JDBC (Data Access Layer).
-- `src/main/java/hdatuan/entity/`: Chứa các class POJO (Model) đại diện cho các bảng trong DB.
-- `src/main/java/hdatuan/filter/`: Chứa các bộ lọc (như `AuthenticationFilter`) để bảo vệ các tuyến đường (routes).
-- `src/main/java/hdatuan/config/`: Cấu hình kết nối Database.
-- `src/main/webapp/WEB-INF/views/`: Chứa các file JSP (View).
+```mermaid
+graph TD
+    Client[Browser / Client] -->|HTTP Request| Filters[Servlet Filters]
+    Filters -->|Authentication & RBAC| Controller[Controllers / Servlets]
+    Controller -->|Fetch / Update Data| Service[Service Layer]
+    Service -->|Business Logic| Repository[Repository Layer]
+    Repository -->|JDBC Query| Database[(MySQL Database)]
+    Repository -->|Map Rows to Entity| Entities[Entities / POJOs]
+    Controller -->|Forward with Model Data| View[JSP Views]
+    View -->|Render HTML Response| Client
+```
 
-## 2. Luồng Xử Lý Dữ Liệu (Request/Response Flow)
-1. **Client (Browser)** gửi Request (ví dụ GET `/user`).
-2. **Filter (`AuthenticationFilter`)** chặn request để kiểm tra session (đã đăng nhập chưa, có quyền truy cập không). Nếu hợp lệ, cho đi tiếp.
-3. **Controller (`UserController`)** tiếp nhận request, lấy dữ liệu từ `HttpServletRequest`.
-4. **Controller** gọi phương thức của **Service (`UserService`)**.
-5. **Service** thực hiện logic và gọi **Repository (`UserRepository`)**.
-6. **Repository** mở kết nối DB qua `MySQLConfig`, chạy câu SQL, map kết quả vào các **Entity** và trả về List/Object cho Service.
-7. **Controller** nhận kết quả từ Service, set vào `req.setAttribute()`.
-8. **Controller** chuyển hướng (forward) tới `JSP` tương ứng.
-9. **JSP** (với JSTL) render HTML và trả về cho Client.
+---
 
-## 3. Luồng Xác thực (Authentication Flow)
-- Gửi POST đến `/login` với email/mật khẩu.
-- `LoginController` gọi `UserService` kiểm tra thông tin.
-- Nếu thành công, lấy thông tin User và lưu vào `HttpSession`.
-- Các request sau đó tới các trang quản trị (như `/home`, `/user`, `/role`) đều bị `AuthenticationFilter` kiểm tra. Nếu không có session, redirect về `/login`.
+## 1. Directory & Packaging Structure
+
+- `src/main/java/hdatuan/controller/`
+  Handles incoming HTTP requests, extracts request parameters, calls the service layer, and forwards the response to the correct view or triggers a redirect.
+- `src/main/java/hdatuan/service/`
+  Implements core business logic and workflows. It acts as an intermediary layer between Controllers and Repositories.
+- `src/main/java/hdatuan/repository/`
+  Directly interacts with the database via JDBC. It contains raw SQL queries and handles mapping database rows into Java entity objects.
+- `src/main/java/hdatuan/entity/`
+  Plain Old Java Objects (POJOs) mapping directly to the MySQL database tables (`User`, `Role`, `Job`, `Task`).
+- `src/main/java/hdatuan/filter/`
+  Servlet Filters that inspect requests globally (e.g., checking if the user session exists, validating permissions).
+- `src/main/java/hdatuan/config/`
+  Database configuration parameters and driver connection establishment class (`MySQLConfig`).
+- `src/main/webapp/WEB-INF/views/`
+  JSP views containing the HTML layouts, styled with Bootstrap, and rendered dynamically via JSTL tags.
+
+---
+
+## 2. Request & Data Flow
+
+For any administrative route (e.g., `GET /user`):
+1. **Client Request:** The user navigates to `/user`.
+2. **Filter Interception:** 
+   - `AuthenticationFilter` ensures a valid session exists. If not, it redirects the browser to `/login`.
+   - `AuthorizationFilter` verifies that the logged-in user has the appropriate role. If not, it forwards the user to the `/403` forbidden page.
+3. **Controller Execution:** The `UserController` receives the request, sets up model attributes, and invokes `UserService.getAllUsers()`.
+4. **Service Process:** `UserService` coordinates the database retrieval by calling `UserRepository.findAll()`.
+5. **Data Access & Mapping:** `UserRepository` connects to MySQL via `MySQLConfig`, runs the select query, maps the returned `ResultSet` into `User` entities, and closes the connection.
+6. **View Forwarding:** The Controller binds the list of users to the request attributes and forwards the request to `/WEB-INF/views/user-table.jsp`.
+7. **JSP Rendering:** Tomcat renders the JSP file to standard HTML and writes the response stream back to the client.

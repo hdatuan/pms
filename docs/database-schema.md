@@ -1,48 +1,94 @@
-# Cấu trúc Database (Database Schema)
+# Database Schema
 
-Database: `pms` (MySQL 8+)
+The Project Management System database is named `pms` and runs on **MySQL 8.0+** using the **InnoDB** storage engine to support transactional safety and foreign key constraints.
 
-## Danh sách các Bảng và Trường dữ liệu quan trọng
+```mermaid
+erDiagram
+    ROLES {
+        int id PK
+        varchar name UK
+        varchar description
+    }
+    USERS {
+        int id PK
+        varchar email UK
+        varchar password
+        varchar fullname
+        int role_id FK
+    }
+    JOBS {
+        int id PK
+        varchar name UK
+        date start_date
+        date end_date
+    }
+    STATUS {
+        int id PK
+        varchar name UK
+    }
+    TASKS {
+        int id PK
+        varchar name
+        date start_date
+        date end_date
+        int user_id FK
+        int job_id FK
+        int status_id FK
+    }
 
-### 1. Bảng `roles` (Quyền hạn)
-Lưu trữ các nhóm quyền của người dùng.
-- `id` (INT, PK, Auto Increment)
-- `name` (VARCHAR, Unique): Tên quyền (ví dụ: ADMIN, MANAGER, STAFF).
-- `description` (VARCHAR): Mô tả quyền.
+    ROLES ||--o{ USERS : "assigned_to"
+    USERS ||--o{ TASKS : "performs"
+    JOBS ||--o{ TASKS : "contains"
+    STATUS ||--o{ TASKS : "classifies"
+```
 
-### 2. Bảng `users` (Người dùng)
-Lưu thông tin tài khoản đăng nhập.
-- `id` (INT, PK, Auto Increment)
-- `email` (VARCHAR, Unique): Tài khoản đăng nhập.
-- `password` (VARCHAR): Mật khẩu.
-- `fullname` (VARCHAR): Họ và tên.
-- `role_id` (INT, FK): Liên kết tới bảng `roles`.
+---
 
-### 3. Bảng `jobs` (Dự án / Nhóm công việc)
-Quản lý các dự án lớn.
-- `id` (INT, PK, Auto Increment)
-- `name` (VARCHAR, Unique): Tên dự án.
-- `start_date` (DATE)
-- `end_date` (DATE)
+## 1. Table Definitions
 
-### 4. Bảng `status` (Trạng thái)
-Danh mục các trạng thái của tác vụ.
-- `id` (INT, PK, Auto Increment)
-- `name` (VARCHAR, Unique): Tên trạng thái (Chưa thực hiện, Đang thực hiện, Đã thực hiện).
+### `roles`
+Stores the access levels and permissions definitions.
+- `id` (INT, Primary Key, Auto Increment)
+- `name` (VARCHAR(50), Unique, Not Null): Role code (e.g., `ADMIN`, `MANAGER`, `STAFF`).
+- `description` (VARCHAR(255)): Human-readable role description.
 
-### 5. Bảng `tasks` (Tác vụ / Công việc)
-Giao việc cho từng user.
-- `id` (INT, PK, Auto Increment)
-- `name` (VARCHAR): Tên công việc.
-- `start_date` (DATE)
-- `end_date` (DATE)
-- `user_id` (INT, FK): Người được giao việc (liên kết bảng `users`).
-- `job_id` (INT, FK): Thuộc dự án nào (liên kết bảng `jobs`).
-- `status_id` (INT, FK): Trạng thái công việc (liên kết bảng `status`).
+### `users`
+Contains account credentials and user profile information.
+- `id` (INT, Primary Key, Auto Increment)
+- `email` (VARCHAR(100), Unique, Not Null): Login credential.
+- `password` (VARCHAR(100), Not Null): Account password.
+- `fullname` (VARCHAR(100), Not Null): Full name of the user.
+- `role_id` (INT, Foreign Key): References `roles(id)`.
 
-## Các Ràng buộc (Relationships & Constraints)
-- **1-N (Role - User)**: 1 Quyền có nhiều User. (Foreign Key: `role_id` trong `users`).
-- **1-N (User - Task)**: 1 User thực hiện nhiều Task. (Foreign Key: `user_id` trong `tasks`).
-- **1-N (Job - Task)**: 1 Job bao gồm nhiều Task. (Foreign Key: `job_id` trong `tasks`).
-- **1-N (Status - Task)**: 1 Trạng thái có nhiều Task. (Foreign Key: `status_id` trong `tasks`).
-- Có ràng buộc Check `end_date >= start_date` ở cả bảng `jobs` và `tasks`.
+### `jobs`
+Represents corporate projects or high-level milestones.
+- `id` (INT, Primary Key, Auto Increment)
+- `name` (VARCHAR(100), Unique, Not Null): Project name.
+- `start_date` (DATE, Not Null)
+- `end_date` (DATE, Not Null)
+- *Constraint:* `CHECK (end_date >= start_date)`
+
+### `status`
+A dictionary of valid statuses for system tasks.
+- `id` (INT, Primary Key, Auto Increment)
+- `name` (VARCHAR(50), Unique, Not Null): (e.g., `Chưa thực hiện`, `Đang thực hiện`, `Đã thực hiện`).
+
+### `tasks`
+Individual assignments linked to users, jobs, and statuses.
+- `id` (INT, Primary Key, Auto Increment)
+- `name` (VARCHAR(100), Not Null): Brief task description.
+- `start_date` (DATE, Not Null)
+- `end_date` (DATE, Not Null)
+- `user_id` (INT, Foreign Key): References `users(id)`.
+- `job_id` (INT, Foreign Key): References `jobs(id)`.
+- `status_id` (INT, Foreign Key): References `status(id)`.
+- *Constraint:* `CHECK (end_date >= start_date)`
+
+---
+
+## 2. Integrity & Deletion Cascades
+
+To maintain database consistency and prevent orphaned rows, the following relational constraints are configured:
+- **`roles` -> `users`:** Restricts deletion of roles if they are currently assigned to any user (`ON DELETE RESTRICT`).
+- **`users` -> `tasks`:** Restricts user deletion if they have active tasks assigned (`ON DELETE RESTRICT`).
+- **`jobs` -> `tasks`:** CASCADE deletion is handled transactionally by the application logic during deletion. Removing a project will automatically remove all tasks nested within that project.

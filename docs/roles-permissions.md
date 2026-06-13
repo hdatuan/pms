@@ -1,88 +1,88 @@
-# Tài liệu Phân quyền Hệ thống (Roles & Permissions)
+# Roles & Permissions (RBAC)
 
-Tài liệu này mô tả chi tiết cơ chế phân quyền (Role-Based Access Control - RBAC) đang được áp dụng trong dự án Project Management System (PMS). 
-
-## 1. Cơ chế hoạt động (Kiến trúc Filter)
-
-Hệ thống sử dụng mô hình bảo mật 2 lớp thông qua Java Servlet Filters, đảm bảo tính tập trung và dễ bảo trì:
-
-1. **Lớp 1: Xác thực (`AuthenticationFilter`)**
-   - Đảm bảo người dùng phải có phiên đăng nhập (Session) hợp lệ.
-   - Nếu chưa đăng nhập, mọi request (trừ các route public như `/login`, tài nguyên tĩnh) đều bị chuyển hướng về trang đăng nhập.
-2. **Lớp 2: Phân quyền (`AuthorizationFilter`)**
-   - Chạy ngay sau khi xác thực thành công.
-   - Kiểm tra **Role ID** của người dùng hiện tại đối chiếu với danh sách các URL được bảo vệ.
-   - Nếu không đủ thẩm quyền, hệ thống sẽ từ chối truy cập và chuyển hướng người dùng đến trang lỗi **403 Forbidden**.
-
-*(Thứ tự chạy của các Filter được đảm bảo tuyệt đối thông qua cấu hình trong `web.xml`)*
+The Project Management System enforces **Role-Based Access Control (RBAC)** to govern routing boundaries and user capabilities. This is achieved via a centralized security filter architecture.
 
 ---
 
-## 2. Danh sách Vai trò (Roles)
+## 1. Security Architecture (Java Servlet Filters)
 
-Hệ thống hiện tại định nghĩa 3 cấp độ phân quyền, được quản lý chặt chẽ qua `UserRole` Enum:
+We implement a two-tiered filter pipeline in the web server to secure application resources:
 
-| Role ID | Tên Vai trò | Mô tả |
-|:---:|:---|:---|
-| `1` | **Admin** (Quản trị viên) | Quyền lực cao nhất, có toàn quyền quản trị toàn bộ hệ thống, quản lý người dùng, phân quyền và các dự án. |
-| `2` | **Manager** (Quản lý) | Chịu trách nhiệm quản lý dự án cụ thể. Được phép thao tác trên các dự án mình quản lý và nhân sự thuộc dự án đó. |
-| `3` | **Staff** (Nhân viên) | Chỉ có quyền xem thông tin cơ bản, thực hiện các công việc (task) được giao. |
+1. **Authentication (`AuthenticationFilter`):**
+   - Intercepts all paths (except `/login` and static resources like CSS/JS).
+   - Validates if a user session exists.
+   - Redirects unauthenticated users to `/login`.
+2. **Authorization (`AuthorizationFilter`):**
+   - Executed immediately after authentication succeeds.
+   - Compares the logged-in user's role against access lists mapping to specific URLs.
+   - Forwards unauthorized attempts to `/403` (Forbidden Page).
 
----
-
-## 3. Bảng Phân quyền Chức năng (Permission Matrix)
-
-Dưới đây là ma trận phân quyền chi tiết cho các chức năng trong hệ thống:
-
-### Nhóm Quản trị Hệ thống (Admin-Only)
-*Chỉ dành riêng cho Admin. Manager và Staff không thể truy cập.*
-
-| Chức năng | Đường dẫn (Route) | Admin | Manager | Staff |
-|:---|:---|:---:|:---:|:---:|
-| Thêm người dùng mới | `/user-add` | ✅ | ❌ | ❌ |
-| Chỉnh sửa người dùng | `/user-edit` | ✅ | ❌ | ❌ |
-| Xóa người dùng | `/user-delete` | ✅ | ❌ | ❌ |
-| Thêm quyền (Role) mới | `/role-add` | ✅ | ❌ | ❌ |
-| Chỉnh sửa quyền | `/role-edit` | ✅ | ❌ | ❌ |
-| Xóa quyền | `/role-delete` | ✅ | ❌ | ❌ |
-
-### Nhóm Quản lý Dự án & Công việc
-*Dành cho Admin và Manager. Staff bị giới hạn.*
-
-| Chức năng | Đường dẫn (Route) | Admin | Manager | Staff |
-|:---|:---|:---:|:---:|:---:|
-| Tạo mới dự án / nhóm việc | `/groupwork-add` | ✅ | ✅ | ❌ |
-| Chỉnh sửa dự án | `/groupwork-edit` | ✅ | ✅ | ❌ |
-| Tạo Task (giao việc) | `/task-add` | ✅ | ✅ | ❌ |
-| Chỉnh sửa Task | `/task-edit` | ✅ | ✅ | ❌ |
-| Cập nhật trạng thái Task (Admin/Manager) | `/task-edit` | ✅ | ✅ | ❌ |
-| Cập nhật trạng thái Task (Cá nhân) | `/profile-edit` | ✅ | ✅ | ✅ |
-| Xóa Task (hủy tác vụ) | `/task-delete` | ✅ | ✅ | ❌ |
-| Quản lý thành viên dự án | Thông qua giao Task | ✅ | ✅ | ❌ |
-| Xem chi tiết tiến độ dự án | `/groupwork-details` | ✅ | ✅ | ❌ |
-
-### Nhóm Truy cập Chung
-*Dành cho tất cả người dùng đã đăng nhập hệ thống.*
-
-| Chức năng | Đường dẫn (Route) | Admin | Manager | Staff |
-|:---|:---|:---:|:---:|:---:|
-| Bảng điều khiển (Dashboard) | `/home` | ✅ | ✅ | ✅ |
-| Xem hồ sơ cá nhân | `/profile` | ✅ | ✅ | ✅ |
-| Cập nhật hồ sơ cá nhân | `/profile-edit` | ✅ | ✅ | ✅ |
-| Xem danh sách thành viên | `/user` | ✅ | ✅ | ✅ |
-| Xem danh sách dự án | `/groupwork` | ✅ | ✅ | ✅ |
-| Xem danh sách công việc | `/task` | ✅ | ✅ | ✅ |
-| Đăng xuất | `/logout` | ✅ | ✅ | ✅ |
+*Note: The filter execution order is strictly guaranteed by the declaration order in `src/main/webapp/WEB-INF/web.xml`.*
 
 ---
 
-## 4. Hướng dẫn Dành cho Developer (Bổ sung Quyền)
+## 2. Defined Roles
 
-Khi phát triển thêm tính năng mới và cần khóa đường dẫn (route) tương ứng, bạn không cần viết code kiểm tra vào Controller. Chỉ cần:
+The application recognizes 3 distinct roles, modeled under the `UserRole` enum:
 
-1. Mở file `src/main/java/hdatuan/filter/AuthorizationFilter.java`.
-2. Thêm đường dẫn (ví dụ: `"/my-new-feature"`) vào một trong hai mảng sau:
-   - `ADMIN_ONLY_PATHS`: Nếu chỉ cho phép Admin.
-   - `ADMIN_AND_MANAGER_PATHS`: Nếu cho phép cả Admin và Manager.
+| Role ID | Role Code | Description |
+| :---: | :--- | :--- |
+| **1** | `ADMIN` | Full control. Can perform user/role management, project planning, and task delegations. |
+| **2** | `MANAGER` | Project management. Can create, edit, view, and assign tasks within projects, and inspect project metrics. |
+| **3** | `STAFF` | Execution role. Can view projects/tasks and update the progress of tasks assigned directly to them. |
 
-Mọi tác vụ từ chối quyền truy cập (redirect về trang 403) sẽ được `AuthorizationFilter` tự động xử lý. Tầng View (JSP) có thể lấy biến boolean từ session hoặc request để ẩn/hiện các nút (Button) tương ứng trên giao diện (Ví dụ: `<c:if test="${isAdmin}"> ... </c:if>`).
+---
+
+## 3. Permission Matrix
+
+### System Administration (Admin Only)
+
+| Function | Endpoint / Route | Admin | Manager | Staff |
+| :--- | :--- | :---: | :---: | :---: |
+| Create User | `GET / POST /user-add` | ✅ | ❌ | ❌ |
+| Edit User | `GET / POST /user-edit` | ✅ | ❌ | ❌ |
+| Delete User | `GET /user-delete` | ✅ | ❌ | ❌ |
+| Create Role | `GET / POST /role-add` | ✅ | ❌ | ❌ |
+| Edit Role | `GET / POST /role-edit` | ✅ | ❌ | ❌ |
+| Delete Role | `GET /role-delete` | ✅ | ❌ | ❌ |
+
+### Project & Task Management
+
+| Function | Endpoint / Route | Admin | Manager | Staff |
+| :--- | :--- | :---: | :---: | :---: |
+| Create Project | `GET / POST /groupwork-add` | ✅ | ✅ | ❌ |
+| Edit Project | `GET / POST /groupwork-edit` | ✅ | ✅ | ❌ |
+| Delete Project | `GET /groupwork-delete` | ✅ | ✅ | ❌ |
+| Project Progress Details | `GET /groupwork-details` | ✅ | ✅ | ❌ |
+| Create Task | `GET / POST /task-add` | ✅ | ✅ | ❌ |
+| Edit Task | `GET / POST /task-edit` | ✅ | ✅ | ❌ |
+| Delete Task | `GET /task-delete` | ✅ | ✅ | ❌ |
+
+### Common Operations (All Authenticated Users)
+
+| Function | Endpoint / Route | Admin | Manager | Staff |
+| :--- | :--- | :---: | :---: | :---: |
+| Dashboard | `GET /home` | ✅ | ✅ | ✅ |
+| Personal Profile | `GET /profile` | ✅ | ✅ | ✅ |
+| Update Personal Task Progress | `GET / POST /profile-edit` | ✅ | ✅ | ✅ |
+| Read User List | `GET /user` | ✅ | ✅ | ✅ |
+| Read Project List | `GET /groupwork` | ✅ | ✅ | ✅ |
+| Read Task List | `GET /task` | ✅ | ✅ | ✅ |
+| Logout | `GET /logout` | ✅ | ✅ | ✅ |
+
+---
+
+## 4. Developer Guide: Protecting New Routes
+
+If you build a new controller and want to restrict its endpoints, you do not need to add authentication code inside the servlet. Instead, follow these steps:
+
+1. Open `src/main/java/hdatuan/filter/AuthorizationFilter.java`.
+2. Add your servlet path (e.g. `"/new-feature"`) into the appropriate collection:
+   - `ADMIN_ONLY_PATHS` (for Admin only access)
+   - `ADMIN_AND_MANAGER_PATHS` (for Admin and Manager access)
+3. For views (JSP files), use JSTL conditional tags combined with session values to hide buttons:
+   ```jsp
+   <c:if test="${sessionScope.user.roleID == 1}">
+       <a href="/role-add">Create Role</a>
+   </c:if>
+   ```
