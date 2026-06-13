@@ -1,7 +1,6 @@
 package hdatuan.controller;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -31,7 +30,7 @@ public class ProfileEditController extends HttpServlet {
 		List<Job> jobList = jobService.getJobById(user.getId());
 		req.setAttribute("jobList", jobList);
 		
-		String jobIdParam = 	req.getParameter("jobId");
+		String jobIdParam = req.getParameter("jobId");
 		if ( jobIdParam != null && !jobIdParam.isEmpty())
 		{
 			int jobId = Integer.parseInt(jobIdParam);
@@ -44,27 +43,42 @@ public class ProfileEditController extends HttpServlet {
 		{
 			int taskId = Integer.parseInt(taskIdParam);
 			Task task = taskService.getTask(taskId);
+
+			// Kiểm tra IDOR: chỉ cho phép xem task của chính mình
+			if (task == null || task.getUser_id() != user.getId()) {
+				resp.sendRedirect(req.getContextPath() + "/403");
+				return;
+			}
+
 			req.setAttribute("task", task);
 		} else {
 			req.setAttribute("task", null);
 		}
 		
-		
 		req.getRequestDispatcher("/WEB-INF/views/profile-edit.jsp").forward(req, resp);
 	}
 	
 	
-	
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");
+		HttpSession session = req.getSession(false);
+		User sessionUser = (User) session.getAttribute("user");
+
 		String jobIdParam = req.getParameter("jobId");
 		String taskIdParam = req.getParameter("taskId");
 		boolean isUpdated = false;
 		
-		if( taskIdParam != null && !taskIdParam.isEmpty()) {			
+		if (taskIdParam != null && !taskIdParam.isEmpty()) {
 			Task task = taskService.getTask(Integer.parseInt(taskIdParam));
-			
+
+			// Kiểm tra IDOR: từ chối nếu task không thuộc về người dùng đang đăng nhập
+			if (task == null || task.getUser_id() != sessionUser.getId()) {
+				resp.sendRedirect(req.getContextPath() + "/403");
+				return;
+			}
+
 			String startDateStr = req.getParameter("start_date");
 			String endDateStr = req.getParameter("end_date");
 
@@ -83,7 +97,6 @@ public class ProfileEditController extends HttpServlet {
 	            return;
 			}
 
-
 			task.setStatus_id(Integer.parseInt(req.getParameter("status_id")));
 			
 			isUpdated = taskService.updateTask(task);
@@ -101,6 +114,3 @@ public class ProfileEditController extends HttpServlet {
 	
 	
 }
-
-
-
