@@ -40,6 +40,7 @@ public class AuthorizationFilter implements Filter {
 
             "/task-add",
             "/task-edit",
+            "/task-delete",
             "/groupwork-add",
             "/groupwork-edit",
             "/groupwork-delete",

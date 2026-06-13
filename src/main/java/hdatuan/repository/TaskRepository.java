@@ -175,6 +175,47 @@ public class TaskRepository {
 		}
 
 	/**
+	 * Thêm mới một tác vụ.
+	 * @return true nếu insert thành công.
+	 */
+	public boolean insert(Task task) {
+		String query = "INSERT INTO tasks (name, start_date, end_date, user_id, job_id, status_id) VALUES (?, ?, ?, ?, ?, ?)";
+		try (
+			Connection connection = MySQLConfig.getConnection();
+			PreparedStatement statement = connection.prepareStatement(query)
+		) {
+			statement.setString(1, task.getName());
+			statement.setDate(2, task.getStart_date());
+			statement.setDate(3, task.getEnd_date());
+			statement.setInt(4, task.getUser_id());
+			statement.setInt(5, task.getJob_id());
+			statement.setInt(6, task.getStatus_id());
+			return statement.executeUpdate() > 0;
+		} catch (Exception e) {
+			System.out.println("Error insert task: " + e.getMessage());
+		}
+		return false;
+	}
+
+	/**
+	 * Xóa một tác vụ theo ID.
+	 * @return true nếu xóa thành công.
+	 */
+	public boolean delete(int id) {
+		String query = "DELETE FROM tasks WHERE id = ?";
+		try (
+			Connection connection = MySQLConfig.getConnection();
+			PreparedStatement statement = connection.prepareStatement(query)
+		) {
+			statement.setInt(1, id);
+			return statement.executeUpdate() > 0;
+		} catch (Exception e) {
+			System.out.println("Error delete task: " + e.getMessage());
+		}
+		return false;
+	}
+
+	/**
 	 * Lấy tất cả tác vụ thuộc một dự án cụ thể, kèm thông tin user thực hiện và trạng thái.
 	 * Dùng để hiển thị chi tiết tiến độ dự án.
 	 */
