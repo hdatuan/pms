@@ -204,18 +204,13 @@
                                         </div>
                                         <div class="form-group">
                                             <c:if test="${not empty param.message}">
-                                                <span id="resultMessage"
-                                                    style="color:${param.message == 'success' ? 'green' : 'red'};">
-                                                    ${param.message == 'success' ? 'Cập nhật thành công' :
-                                                    param.message == 'fail' ? 'Cập nhật thất bại' :
-                                                    'Không có công việc để cập nhật'}
-                                                </span>
-
                                                 <script>
-                                                    setTimeout(() => {
-                                                        var msg = document.getElementById("resultMessage");
-                                                        if (msg) msg.style.display = "none";
-                                                    }, 3000);
+                                                    window.addEventListener('DOMContentLoaded', function() {
+                                                        showToast(
+                                                            "${param.message == 'success' ? 'Cập nhật thành công!' : param.message == 'fail' ? 'Cập nhật thất bại!' : 'Không có công việc để cập nhật!'}",
+                                                            "${param.message == 'success' ? 'success' : 'error'}"
+                                                        );
+                                                    });
                                                 </script>
                                             </c:if>
 
