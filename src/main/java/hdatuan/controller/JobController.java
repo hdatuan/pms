@@ -264,17 +264,26 @@ public class JobController extends HttpServlet {
 			job.setEnd_date(endDate);
 
 			boolean success = jobService.addJob(job);
-			req.setAttribute("message",   success ? "Thêm dự án thành công!" : "Thêm thất bại, vui lòng thử lại!");
-			req.setAttribute("isDone",    true);
-			req.setAttribute("isSuccess", success);
+			if (success) {
+				HttpSession session = req.getSession();
+				session.setAttribute("message", "Thêm dự án thành công!");
+				session.setAttribute("isSuccess", true);
+				resp.sendRedirect(req.getContextPath() + "/groupwork");
+				return;
+			} else {
+				req.setAttribute("message", "Thêm thất bại, vui lòng thử lại!");
+				req.setAttribute("isDone", true);
+				req.setAttribute("isSuccess", false);
+				req.getRequestDispatcher("/WEB-INF/views/groupwork-add.jsp").forward(req, resp);
+				return;
+			}
 
 		} catch (IllegalArgumentException e) {
 			req.setAttribute("message", "Định dạng ngày không hợp lệ (YYYY-MM-DD)!");
-			req.setAttribute("isDone",    true);
+			req.setAttribute("isDone", true);
 			req.setAttribute("isSuccess", false);
+			req.getRequestDispatcher("/WEB-INF/views/groupwork-add.jsp").forward(req, resp);
 		}
-
-		req.getRequestDispatcher("/WEB-INF/views/groupwork-add.jsp").forward(req, resp);
 	}
 
 	/** Xử lý POST cập nhật dự án */
@@ -290,26 +299,33 @@ public class JobController extends HttpServlet {
 			return;
 		}
 
+		int id = 0;
+		Job job = null;
 		try {
-			int id = Integer.parseInt(idStr);
-			Job job = jobService.findJobById(id);
+			id = Integer.parseInt(idStr);
+			job = jobService.findJobById(id);
+		} catch (NumberFormatException e) {
+			resp.sendRedirect(req.getContextPath() + "/groupwork");
+			return;
+		}
 
-			if (job == null) {
-				resp.sendRedirect(req.getContextPath() + "/groupwork");
-				return;
-			}
+		if (job == null) {
+			resp.sendRedirect(req.getContextPath() + "/groupwork");
+			return;
+		}
 
-			if (name == null || name.trim().isEmpty()
-					|| startDateStr == null || startDateStr.isEmpty()
-					|| endDateStr == null || endDateStr.isEmpty()) {
-				req.setAttribute("message", "Vui lòng điền đầy đủ thông tin dự án!");
-				req.setAttribute("isDone", true);
-				req.setAttribute("isSuccess", false);
-				req.setAttribute("editJob", job);
-				req.getRequestDispatcher("/WEB-INF/views/groupwork-edit.jsp").forward(req, resp);
-				return;
-			}
+		if (name == null || name.trim().isEmpty()
+				|| startDateStr == null || startDateStr.isEmpty()
+				|| endDateStr == null || endDateStr.isEmpty()) {
+			req.setAttribute("message", "Vui lòng điền đầy đủ thông tin dự án!");
+			req.setAttribute("isDone", true);
+			req.setAttribute("isSuccess", false);
+			req.setAttribute("editJob", job);
+			req.getRequestDispatcher("/WEB-INF/views/groupwork-edit.jsp").forward(req, resp);
+			return;
+		}
 
+		try {
 			java.sql.Date startDate = java.sql.Date.valueOf(startDateStr);
 			java.sql.Date endDate   = java.sql.Date.valueOf(endDateStr);
 
@@ -327,17 +343,24 @@ public class JobController extends HttpServlet {
 			job.setEnd_date(endDate);
 
 			boolean success = jobService.updateJob(job);
-			req.setAttribute("message",   success ? "Cập nhật dự án thành công!" : "Cập nhật thất bại, vui lòng thử lại!");
-			req.setAttribute("isDone",    true);
-			req.setAttribute("isSuccess", success);
-			req.setAttribute("editJob",   job);
+			if (success) {
+				HttpSession session = req.getSession();
+				session.setAttribute("message", "Cập nhật dự án thành công!");
+				session.setAttribute("isSuccess", true);
+				resp.sendRedirect(req.getContextPath() + "/groupwork");
+				return;
+			} else {
+				req.setAttribute("message", "Cập nhật thất bại, vui lòng thử lại!");
+				req.setAttribute("editJob", job);
+			}
 
 		} catch (IllegalArgumentException e) {
-			req.setAttribute("message",   "Dữ liệu không hợp lệ!");
-			req.setAttribute("isDone",    true);
-			req.setAttribute("isSuccess", false);
+			req.setAttribute("message", "Dữ liệu không hợp lệ!");
+			req.setAttribute("editJob", job);
 		}
 
+		req.setAttribute("isDone", true);
+		req.setAttribute("isSuccess", false);
 		req.getRequestDispatcher("/WEB-INF/views/groupwork-edit.jsp").forward(req, resp);
 	}
 }

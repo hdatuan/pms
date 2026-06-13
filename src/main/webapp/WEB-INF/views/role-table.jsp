@@ -141,13 +141,10 @@
                             <div class="col-sm-12">
                                 <div class="white-box">
                                     <c:if test="${not empty deleteMessage}">
-                                        <div style="margin-bottom: 15px; color:${isSuccess ? 'green' : 'red'};">
-                                            ${deleteMessage}
-                                        </div>
                                         <script>
-                                            setTimeout(() => {
-                                                document.querySelector('[style*="margin-bottom"]').style.display = "none";
-                                            }, 3000);
+                                            window.addEventListener('DOMContentLoaded', function() {
+                                                showToast("${deleteMessage}", "${isSuccess ? 'success' : 'error'}");
+                                            });
                                         </script>
                                     </c:if>
 

@@ -27,9 +27,24 @@ public class UserController extends HttpServlet {
 
 		if (req.getServletPath().equals("/user-delete")) {
 			int user_id = Integer.parseInt(req.getParameter("id"));
-			userService.deleteUser(user_id);
+			boolean success = userService.deleteUser(user_id);
+			if (session != null) {
+				session.setAttribute("deleteMessage", success ? "Xóa người dùng thành công!" : "Xóa người dùng thất bại!");
+				session.setAttribute("isSuccess", success);
+			}
 			resp.sendRedirect(req.getContextPath() + "/user");
 			return;
+		}
+
+		// Đọc flash message từ session (nếu có sau khi redirect từ user-delete)
+		if (session != null) {
+			Object deleteMsg = session.getAttribute("deleteMessage");
+			if (deleteMsg != null) {
+				req.setAttribute("deleteMessage", deleteMsg);
+				req.setAttribute("isSuccess", session.getAttribute("isSuccess"));
+				session.removeAttribute("deleteMessage");
+				session.removeAttribute("isSuccess");
+			}
 		}
 
 		List<User> userList = userService.getAllUsers();

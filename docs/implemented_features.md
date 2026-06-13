@@ -33,9 +33,12 @@ Tài liệu này đối chiếu và xác nhận trạng thái thực tế của 
 * **Xóa dự án**: Hoàn thiện qua [JobController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/JobController.java) (`/groupwork-delete`). Tự động xóa các tác vụ (Tasks) liên quan trong một giao dịch (transaction cascade delete) để đảm bảo toàn vẹn dữ liệu. Chỉ cho phép Admin/Manager.
 * **Xem chi tiết tiến độ**: Hoàn thiện qua [JobController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/JobController.java) (`/groupwork-details`). Hiển thị biểu đồ phần trăm tiến độ động và danh sách công việc của từng nhân viên tham gia. Chỉ cho phép Admin/Manager.
 
-### 5. Quản lý Tác vụ (Task Management) - *Chưa hoàn thiện*
+### 5. Quản lý Tác vụ (Task Management) - *Chưa hoàn thiện (Đang lên kế hoạch)*
 * **Hiện trạng**: Chỉ mới hỗ trợ xem danh sách tác vụ tổng quan qua [TaskController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/TaskController.java) (`/task`).
-* **Thiếu sót**: Chưa có Servlet/Controller cho việc tạo mới (giao việc), chỉnh sửa hay xóa tác vụ ở góc độ Admin/Manager, mặc dù giao diện [task.jsp](file:///d:/WorkSpace/pms/src/main/webapp/WEB-INF/views/task.jsp) có nút thêm mới trỏ tới file tĩnh `task-add.html`.
+* **Thiếu sót**: Chưa có Servlet/Controller cho việc tạo mới (giao việc), chỉnh sửa hay xóa tác vụ ở góc độ Admin/Manager.
+* **Kế hoạch tương lai**: 
+  - Triển khai đầy đủ tính năng CRUD (Thêm, Sửa, Xóa) cho Task dưới quyền Admin/Manager.
+  - Tích hợp hệ thống thông báo Toast hiện đại (`showToast`) tương tự như User, Job, và Role.
 
 ### 6. Trang cá nhân & Tiến độ (User Profile & Task Update)
 * **Xem thông tin cá nhân**: Hoàn thiện qua [ProfileController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/ProfileController.java) (`/profile`), hiển thị thông tin và thống kê công việc của chính nhân viên đang đăng nhập.

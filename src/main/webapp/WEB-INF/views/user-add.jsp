@@ -178,16 +178,10 @@
                       </div>
                     </div>
                     <c:if test="${isDone}">
-                      <span id="notifyMessage" style="color:${isSuccess ? 'green' : 'red'};">
-                        ${message}
-                      </span>
                       <script>
-                        setTimeout(function () {
-                          var msg = document.getElementById("notifyMessage");
-                          if (msg) {
-                            msg.style.display = "none";
-                          }
-                        }, 3000); 
+                        window.addEventListener('DOMContentLoaded', function() {
+                          showToast("${message}", "${isSuccess ? 'success' : 'error'}");
+                        });
                       </script>
                     </c:if>
                     <div class="form-group">

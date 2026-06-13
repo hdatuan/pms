@@ -29,8 +29,8 @@ public class UserService {
 		return userRepository.insertUser(fullName, email, password, roleId) > 0;
 	}
 	
-	public void deleteUser(int id) {
-		userRepository.deleteUser(id);
+	public boolean deleteUser(int id) {
+		return userRepository.deleteUser(id);
 	}
 }
 

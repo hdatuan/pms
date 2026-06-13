@@ -158,18 +158,19 @@ public class UserRepository {
 	}
 	
 	
-	public void deleteUser(int id) {
+	public boolean deleteUser(int id) {
 		String query = "DELETE FROM users WHERE id = ?";
 		try (Connection connection = MySQLConfig.getConnection()) {
 			if (connection == null) {
-				throw new RuntimeException("Database disconnected");
+				return false;
 			}
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
 				statement.setInt(1, id);
-				statement.executeUpdate();
+				return statement.executeUpdate() > 0;
 			}
 		} catch (Exception e) {
 			System.out.println("Error : " + e.getMessage());
+			return false;
 		}
 	}
 }

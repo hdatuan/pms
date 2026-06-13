@@ -142,14 +142,11 @@
 						</div>
 						<!-- Flash Message -->
 						<c:if test="${not empty flashMessage}">
-							<div class="row">
-								<div class="col-sm-12">
-									<div class="alert ${flashSuccess ? 'alert-success' : 'alert-danger'}" id="flashAlert">
-										${flashMessage}
-									</div>
-								</div>
-							</div>
-							<script>setTimeout(function(){ var el=document.getElementById('flashAlert'); if(el) el.style.display='none'; }, 3000);</script>
+							<script>
+								window.addEventListener('DOMContentLoaded', function() {
+									showToast("${flashMessage}", "${flashSuccess ? 'success' : 'error'}");
+								});
+							</script>
 						</c:if>
 						<!-- /row -->
 						<div class="row">

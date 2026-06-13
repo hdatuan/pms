@@ -129,7 +129,19 @@ public class RoleController extends HttpServlet {
 
         if (servletPath.equals("/role-add")) {
             isSuccess = roleService.insertRole(roleName, roleDescription);
-            req.setAttribute("message", isSuccess ? "Thêm quyền thành công!" : "Quyền đã tồn tại hoặc thêm thất bại!");
+            if (isSuccess) {
+                HttpSession session = req.getSession();
+                session.setAttribute("deleteMessage", "Thêm quyền thành công!");
+                session.setAttribute("isSuccess", true);
+                resp.sendRedirect(req.getContextPath() + "/role");
+                return;
+            } else {
+                req.setAttribute("message", "Quyền đã tồn tại hoặc thêm thất bại!");
+                req.setAttribute("isDone", isDone);
+                req.setAttribute("isSuccess", false);
+                req.getRequestDispatcher("/WEB-INF/views/role-add.jsp").forward(req, resp);
+                return;
+            }
         } else {
             if (roleIdStr == null || roleIdStr.isEmpty()) {
                 req.setAttribute("message", "Thiếu ID quyền cần chỉnh sửa!");
@@ -142,8 +154,15 @@ public class RoleController extends HttpServlet {
             try {
                 int roleId = Integer.parseInt(roleIdStr);
                 isSuccess = roleService.updateRole(roleId, roleName, roleDescription);
-                req.setAttribute("message",
-                        isSuccess ? "Cập nhật quyền thành công!" : "Cập nhật thất bại, vui lòng thử lại!");
+                if (isSuccess) {
+                    HttpSession session = req.getSession();
+                    session.setAttribute("deleteMessage", "Cập nhật quyền thành công!");
+                    session.setAttribute("isSuccess", true);
+                    resp.sendRedirect(req.getContextPath() + "/role");
+                    return;
+                } else {
+                    req.setAttribute("message", "Cập nhật thất bại, vui lòng thử lại!");
+                }
             } catch (NumberFormatException e) {
                 isSuccess = false;
                 req.setAttribute("message", "ID quyền không hợp lệ!");
@@ -152,6 +171,11 @@ public class RoleController extends HttpServlet {
 
         req.setAttribute("isDone", isDone);
         req.setAttribute("isSuccess", isSuccess);
+        // Tải lại editRole nếu thất bại để form không bị trống
+        try {
+            int id = Integer.parseInt(roleIdStr);
+            req.setAttribute("editRole", roleService.findById(id));
+        } catch (Exception e) {}
         forwardByPath(req, resp, servletPath);
     }
 

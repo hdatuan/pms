@@ -59,12 +59,19 @@ public class UserAddController extends HttpServlet {
 		int roleId = Integer.parseInt(req.getParameter("role-id"));
 		boolean isDone = true;
 
-		// Bug 3 fix: khi edit, password có thể rỗng (giữ nguyên mật khẩu cũ)
 		boolean isEditMode = req.getServletPath().equals("/user-edit");
 		if (fullName == null || fullName.trim().isEmpty() || email == null || email.trim().isEmpty()) {
 			req.setAttribute("message", "Họ tên và Email không được để trống!");
 			req.setAttribute("isDone", isDone);
 			req.setAttribute("isSuccess", false);
+			// Reload roles for selection
+			req.setAttribute("roles", roleService.getAllRoles());
+			if (isEditMode) {
+				String idStr = req.getParameter("id");
+				if (idStr != null && !idStr.isEmpty()) {
+					req.setAttribute("editUser", userService.findById(Integer.parseInt(idStr)));
+				}
+			}
 			req.getRequestDispatcher(isEditMode ? "/WEB-INF/views/user-edit.jsp" : "/WEB-INF/views/user-add.jsp")
 					.forward(req, resp);
 			return;
@@ -73,41 +80,48 @@ public class UserAddController extends HttpServlet {
 			req.setAttribute("message", "Mật khẩu không được để trống!");
 			req.setAttribute("isDone", isDone);
 			req.setAttribute("isSuccess", false);
+			// Reload roles
+			req.setAttribute("roles", roleService.getAllRoles());
 			req.getRequestDispatcher("/WEB-INF/views/user-add.jsp").forward(req, resp);
 			return;
 		}
 
+		HttpSession session = req.getSession();
+
 		if (req.getServletPath().equals("/user-add")) {
-
 			boolean isSuccess = userService.insertUser(fullName, email, password, roleId);
-
 			if (isSuccess) {
-				req.setAttribute("message", "Thêm người dùng thành công!");
+				if (session != null) {
+					session.setAttribute("deleteMessage", "Thêm người dùng thành công!");
+					session.setAttribute("isSuccess", true);
+				}
+				resp.sendRedirect(req.getContextPath() + "/user");
 			} else {
 				req.setAttribute("message", "Người dùng đã tồn tại, vui lòng thử lại!");
+				req.setAttribute("isDone", isDone);
+				req.setAttribute("isSuccess", false);
+				req.setAttribute("roles", roleService.getAllRoles());
+				req.getRequestDispatcher("/WEB-INF/views/user-add.jsp").forward(req, resp);
 			}
-			req.setAttribute("isDone", isDone);
-			req.setAttribute("isSuccess", isSuccess);
-			req.getRequestDispatcher("/WEB-INF/views/user-add.jsp").forward(req, resp);
 		} else if (req.getServletPath().equals("/user-edit")) {
 			int id = Integer.parseInt(req.getParameter("id"));
-			// password truyền vào, Service sẽ tự xử lý nếu rỗng (Phương án A)
 			boolean isSuccess = userService.updateUser(id, fullName, email, password, roleId);
-			// Bug 2 fix: đổi attribute name từ "user" sang "editUser" để khớp với JSP
-			User editUser = userService.findById(id);
-			List<Role> roles = roleService.getAllRoles();
 			if (isSuccess) {
-				req.setAttribute("message", "Chỉnh sửa người dùng thành công!");
+				if (session != null) {
+					session.setAttribute("deleteMessage", "Chỉnh sửa người dùng thành công!");
+					session.setAttribute("isSuccess", true);
+				}
+				resp.sendRedirect(req.getContextPath() + "/user");
 			} else {
+				User editUser = userService.findById(id);
 				req.setAttribute("message", "Thất bại, vui lòng thử lại!");
+				req.setAttribute("editUser", editUser);
+				req.setAttribute("roles", roleService.getAllRoles());
+				req.setAttribute("isDone", isDone);
+				req.setAttribute("isSuccess", false);
+				req.getRequestDispatcher("/WEB-INF/views/user-edit.jsp").forward(req, resp);
 			}
-			req.setAttribute("editUser", editUser);
-			req.setAttribute("roles", roles);
-			req.setAttribute("isDone", isDone);
-			req.setAttribute("isSuccess", isSuccess);
-			req.getRequestDispatcher("/WEB-INF/views/user-edit.jsp").forward(req, resp);
 		}
-
 	}
 
 }

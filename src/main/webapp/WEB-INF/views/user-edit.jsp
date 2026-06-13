@@ -184,23 +184,10 @@
                       </div>
                     </div>
                     <c:if test="${isDone}">
-                      <c:choose>
-                        <c:when test="${isSuccess}">
-                          <span id="notifyMessage" class="text-success">
-                        </c:when>
-                        <c:otherwise>
-                          <span id="notifyMessage" class="text-danger">
-                        </c:otherwise>
-                      </c:choose>
-                      ${message}
-                      </span>
                       <script>
-                        setTimeout(function () {
-                          var msg = document.getElementById("notifyMessage");
-                          if (msg) {
-                            msg.style.display = "none";
-                          }
-                        }, 3000);
+                        window.addEventListener('DOMContentLoaded', function() {
+                          showToast("${message}", "${isSuccess ? 'success' : 'error'}");
+                        });
                       </script>
                     </c:if>
                     <div class="form-group">

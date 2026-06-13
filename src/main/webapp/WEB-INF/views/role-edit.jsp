@@ -155,14 +155,10 @@
                                         </div>
 
                                         <c:if test="${isDone}">
-                                            <span id="roleMessage" style="color:${isSuccess ? 'green' : 'red'};">
-                                                ${message}
-                                            </span>
                                             <script>
-                                                setTimeout(function () {
-                                                    var msg = document.getElementById("roleMessage");
-                                                    if (msg) msg.style.display = "none";
-                                                }, 3000);
+                                                window.addEventListener('DOMContentLoaded', function() {
+                                                    showToast("${message}", "${isSuccess ? 'success' : 'error'}");
+                                                });
                                             </script>
                                         </c:if>
 

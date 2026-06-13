@@ -161,15 +161,13 @@
                                                     class="form-control form-control-line" required>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <c:if test="${isDone}">
-                                                <span id="notifyMessage"
-                                                    style="color: ${isSuccess ? 'green' : 'red'}; display:block; margin-bottom:8px;">
-                                                    ${message}
-                                                </span>
-                                                <script>setTimeout(function() { var m = document.getElementById('notifyMessage'); if(m) m.style.display='none'; }, 3000);</script>
-                                            </c:if>
-                                        </div>
+                                        <c:if test="${isDone}">
+                                            <script>
+                                                window.addEventListener('DOMContentLoaded', function() {
+                                                    showToast("${message}", "${isSuccess ? 'success' : 'error'}");
+                                                });
+                                            </script>
+                                        </c:if>
                                         <div class="form-group">
                                             <div class="col-sm-12">
                                                 <button type="submit" class="btn btn-success">Lưu lại</button>
