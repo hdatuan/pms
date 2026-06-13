@@ -45,6 +45,11 @@ public class MySQLConfig {
 
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			connection = DriverManager.getConnection(url, username, password);
+			if (connection != null) {
+				try (java.sql.Statement stmt = connection.createStatement()) {
+					stmt.execute("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
+				}
+			}
 		} catch (Exception e) {
 			System.out.println("Lỗi kết nối : " + e.getMessage());
 		}
