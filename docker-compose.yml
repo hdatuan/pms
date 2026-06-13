@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: pms-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-admin}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-pms}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Tự động import dữ liệu mẫu lúc khởi tạo container lần đầu
+      - ./database/pms.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-admin}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pms-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pms-app
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      # Cấu hình biến môi trường kết nối cơ sở dữ liệu trỏ vào service 'db'
+      - DB_URL=jdbc:mysql://db:3306/${MYSQL_DATABASE:-pms}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+      - DB_USER=${DB_USER:-root}
+      - DB_PASS=${DB_PASS:-admin}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pms-network
+
+volumes:
+  db_data:
+
+networks:
+  pms-network:
+    driver: bridge

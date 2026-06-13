@@ -27,10 +27,10 @@ docker run --name pms-mysql -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=pms -
 - `-p 3306:3306`: Map port 3306 của container ra port 3306 của máy host.
 - `-d`: Chạy ngầm (detached mode).
 
-Sau khi container đã chạy, bạn cần import dữ liệu mẫu. Nếu bạn đang ở thư mục gốc của dự án (`d:\WorkSpace\pms`), hãy chạy lệnh sau để đẩy file `schema.sql` vào container:
+Sau khi container đã chạy, bạn cần import dữ liệu mẫu. Nếu bạn đang ở thư mục gốc của dự án (`d:\WorkSpace\pms`), hãy chạy lệnh sau để đẩy file `pms.sql` vào container:
 
 ```bash
-docker exec -i pms-mysql mysql -uroot -padmin pms < database/schema.sql
+docker exec -i pms-mysql mysql -uroot -padmin pms < database/pms.sql
 ```
 
 ## Bước 2: Cấu hình kết nối Database
@@ -76,9 +76,47 @@ Mở trình duyệt và truy cập vào địa chỉ:
 
 ---
 
+## Hướng dẫn Khởi chạy bằng Docker Compose (Khuyên dùng)
+
+Nếu bạn đã cài đặt **Docker & Docker Desktop**, đây là cách nhanh nhất và chuẩn hóa nhất để chạy dự án mà không cần phải cài đặt thủ công Java, Maven hay Apache Tomcat trên máy host.
+
+### Các bước thực hiện:
+
+1. **Khởi động Docker Desktop** trên máy tính của bạn.
+2. **Cấu hình môi trường (.env)**:
+   - Tạo một bản sao từ file `.env.example` ở thư mục gốc của dự án và đổi tên thành `.env`.
+   - Mở file `.env` và tùy chỉnh tên database (`MYSQL_DATABASE`), mật khẩu Root (`MYSQL_ROOT_PASSWORD`), cổng MySQL trên máy host (`MYSQL_PORT`), tài khoản đăng nhập DB của ứng dụng (`DB_USER`, `DB_PASS`) theo nhu cầu của bạn.
+3. **Khởi chạy hệ thống bằng Docker Compose**:
+   Tại thư mục gốc của dự án (nơi chứa file `docker-compose.yml` và `.env`), chạy lệnh sau trong PowerShell/CMD hoặc Terminal:
+   ```bash
+   docker compose up --build -d
+   ```
+   *Lệnh này sẽ:*
+   - Xây dựng file WAR của ứng dụng bên trong container builder (Java 21).
+   - Tải và cấu hình MySQL 8.0, tự động import dữ liệu mẫu từ `database/pms.sql`.
+   - Tải và cấu hình Apache Tomcat 9, deploy ứng dụng dưới dạng thư mục gốc (ROOT).
+   - Chạy ngầm toàn bộ các dịch vụ (`-d`).
+
+3. **Truy cập ứng dụng**:
+   Mở trình duyệt và truy cập vào địa chỉ:
+   👉 **http://localhost:8080/**
+   *(Lưu ý: Vì được deploy dưới dạng `ROOT.war` trong container, bạn có thể truy cập thẳng qua port 8080 mà không cần hậu tố `/pms`)*.
+
+4. **Dừng hệ thống**:
+   Để dừng toàn bộ các container và giữ nguyên dữ liệu, chạy lệnh:
+   ```bash
+   docker compose down
+   ```
+   Để xóa sạch dữ liệu (bao gồm cả database volumes), chạy lệnh:
+   ```bash
+   docker compose down -v
+   ```
+
+---
+
 ## Các lệnh thao tác nhanh (Cheat Sheet)
 
-- **Dừng server:** Nhấn `Ctrl + C` tại cửa sổ Terminal đang chạy `mvn cargo:run`.
-- **Dừng Database:** `docker stop pms-mysql`
-- **Khởi động lại Database:** `docker start pms-mysql`
-- **Xóa hoàn toàn Database:** `docker rm -f pms-mysql`
+- **Dừng server (Chạy thủ công):** Nhấn `Ctrl + C` tại cửa sổ Terminal đang chạy `mvn cargo:run`.
+- **Dừng Database (Chạy thủ công):** `docker stop pms-mysql`
+- **Khởi động lại Database (Chạy thủ công):** `docker start pms-mysql`
+- **Xóa hoàn toàn Database (Chạy thủ công):** `docker rm -f pms-mysql`

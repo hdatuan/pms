@@ -10,18 +10,39 @@ public class MySQLConfig {
 	public static Connection getConnection() {
 		Connection connection = null;
 		Properties prop = new Properties();
-		try ( InputStream input = MySQLConfig.class.getClassLoader().getResourceAsStream("db.properties"))
-		{
-			if ( input == null ) {
-				System.out.println("Không tìm thấy file db.properties");
+		try (InputStream input = MySQLConfig.class.getClassLoader().getResourceAsStream("db.properties")) {
+			String url = null;
+			String username = null;
+			String password = null;
+
+			if (input != null) {
+				prop.load(input);
+				url = prop.getProperty("db.url");
+				username = prop.getProperty("db.user");
+				password = prop.getProperty("db.pass");
+			} else {
+				System.out.println("Không tìm thấy file db.properties, sẽ thử đọc từ biến môi trường.");
+			}
+
+			String envUrl = System.getenv("DB_URL");
+			String envUser = System.getenv("DB_USER");
+			String envPass = System.getenv("DB_PASS");
+
+			if (envUrl != null && !envUrl.trim().isEmpty()) {
+				url = envUrl;
+			}
+			if (envUser != null && !envUser.trim().isEmpty()) {
+				username = envUser;
+			}
+			if (envPass != null && !envPass.trim().isEmpty()) {
+				password = envPass;
+			}
+
+			if (url == null || username == null) {
+				System.out.println("Lỗi: Không tìm thấy cấu hình Database (db.properties hoặc Env Variables).");
 				return null;
 			}
-			
-			prop.load(input);
-			String url = prop.getProperty("db.url");
-			String username = prop.getProperty("db.user");
-			String password = prop.getProperty("db.pass");
-														
+
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			connection = DriverManager.getConnection(url, username, password);
 		} catch (Exception e) {
@@ -30,4 +51,3 @@ public class MySQLConfig {
 		return connection;
 	}
 }
-

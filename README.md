@@ -71,54 +71,59 @@ The project strictly follows the **Standard MVC (Model-View-Controller)** patter
 
 ---
 
-## Getting Started
+## Getting Started (Local Setup)
+
+The easiest and fastest way to build and run this application is using **Docker Compose**. It packages Apache Tomcat 9 and MySQL 8.0, allowing you to run the entire system with a single command without installing Java, Maven, or Tomcat locally on your host machine.
 
 ### Prerequisites
-*   JDK: [Java Development Kit (JDK 8+)](https://www.oracle.com/java/technologies/downloads/)
-*   Web Server: [Apache Tomcat 9.0](https://tomcat.apache.org/download-90.cgi)
-*   Database: [MySQL Server 8.0+](https://dev.mysql.com/downloads/installer/) (or run as a container on Docker)
-*   IDE: [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) (Ultimate Edition is recommended or Community Edition with Smart Tomcat plugin)
+- For **Windows** & **macOS**: Install and start [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+- For **Linux**: Install and start [Docker Engine](https://docs.docker.com/engine/install/) and the [Docker Compose CLI plugin](https://docs.docker.com/compose/install/).
 
-### Installation
-1.  **Clone the repository**
-    ```sh
-    git clone https://github.com/hdatuan/pms.git
-    cd pms
-    ```
+### Step-by-Step Installation
 
-2.  **Database Setup**
-    *   Open MySQL Workbench or CLI.
-    *   Execute the script located at `/database/schema.sql` (if available) or create a database named `pms`.
-    *   Update database credentials in `src/main/resources/db.properties`:
-        ```properties
-        db.url=jdbc:mysql://localhost:3306/pms
-        db.user=root
-        db.password=your_password
-        ```
-    * Since you are working with Docker, you can quickly spin up the database environment without local installation using the following command:
-         ```bash
-      docker run --name pms-mysql -e MYSQL_ROOT_PASSWORD=your_password -e MYSQL_DATABASE=pms -p 3306:3306 -d mysql:8.0
-         ```
-       
-3.  **IDE Setup (IntelliJ IDEA)**
-    *   `File` -> `Open` and navigate to the project root directory.
-    *   `File` -> `Project Structure`.
-        * Under **Modules**, ensure `src/main/java` is marked as **Sources** and `src/main/webapp` is recognized as a **Web Resource Directory**.
-        * Under **Libraries**, click the **+** icon and add all `.jar` files from `src/main/webapp/WEB-INF/lib` to resolve dependencies.
-    * **Tomcat Server Setup**:
-        * Go to `Run` -> `Edit Configurations...`.
-        * Click the **+** icon, select **Tomcat Server** -> **Local**.
-        * In the **Server** tab, configure the path to your Tomcat 9.0 installation.
-        * In the **Deployment** tab, click **+** -> **Artifact** and select `pms:war exploded`.
-        * Set the **Application context** to `/pms`.
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/hdatuan/CRM_Application.git
+   cd CRM_Application
+   ```
 
-4.  **Access the App**
-    * Click the **Run** icon in IntelliJ.  
-    * Open Browser: `http://localhost:8080/pms`
-    * **Default Credentials**:
-        * **Admin**: `admin@gmail.com` / `123456`
-        * **Manager**: `manager01@gmail.com` / `123456`
-        * **Staff**: `staff.dev01@gmail.com` / `123456`
+2. **Configure Environment Variables (`.env`)**
+   - Create a `.env` file by copying the template file `.env.example`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Open the `.env` file and customize the database name (`MYSQL_DATABASE`), root password (`MYSQL_ROOT_PASSWORD`), external port mapping (`MYSQL_PORT`), and application database credentials (`DB_USER`, `DB_PASS`) to fit your needs.
+
+3. **Start the Application**
+   Run the following command in your terminal from the project root:
+   ```bash
+   docker compose up --build -d
+   ```
+   *This command will:*
+   - Compile the Java source code into a WAR file inside a multi-stage builder container.
+   - Boot up the MySQL database container and automatically import the sample schema and data from `database/pms.sql`.
+   - Start the Apache Tomcat 9 container and deploy the application as the root context (`ROOT.war`).
+
+4. **Access the Application**
+   Open your browser and navigate to: **[http://localhost:8080/](http://localhost:8080/)**
+   *(Note: Since the app is deployed in the root context, no `/pms` path suffix is required).*
+
+5. **Stop the Application**
+   To stop and remove containers while preserving the database volume, run:
+   ```bash
+   docker compose down
+   ```
+   To remove containers and completely delete the database volumes, run:
+   ```bash
+   docker compose down -v
+   ```
+
+---
+
+### Default Test Credentials
+- **Admin**: `admin@gmail.com` / `123456`
+- **Manager**: `manager01@gmail.com` / `123456`
+- **Staff**: `staff.dev01@gmail.com` / `123456`
 
 ---
 
