@@ -83,8 +83,8 @@ The easiest and fastest way to build and run this application is using **Docker 
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/hdatuan/CRM_Application.git
-   cd CRM_Application
+   git clone https://github.com/hdatuan/pms.git
+   cd pms
    ```
 
 2. **Configure Environment Variables (`.env`)**
@@ -106,7 +106,6 @@ The easiest and fastest way to build and run this application is using **Docker 
 
 4. **Access the Application**
    Open your browser and navigate to: **[http://localhost:8080/](http://localhost:8080/)**
-   *(Note: Since the app is deployed in the root context, no `/pms` path suffix is required).*
 
 5. **Stop the Application**
    To stop and remove containers while preserving the database volume, run:

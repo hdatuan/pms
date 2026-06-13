@@ -12,7 +12,6 @@ services:
       - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - db_data:/var/lib/mysql
-      # Tự động import dữ liệu mẫu lúc khởi tạo container lần đầu
       - ./database/pms.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-admin}"]
@@ -31,7 +30,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Cấu hình biến môi trường kết nối cơ sở dữ liệu trỏ vào service 'db'
       - DB_URL=jdbc:mysql://db:3306/${MYSQL_DATABASE:-pms}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
       - DB_USER=${DB_USER:-root}
       - DB_PASS=${DB_PASS:-admin}
