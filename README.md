@@ -4,9 +4,12 @@
 ### A Modern Internal Work & Project Management Platform
 
 [![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
-[![Servlet](https://img.shields.io/badge/Servlet-Using%20v3.1-orange?style=for-the-badge)](https://jakarta.ee/specifications/servlet/)
+[![Servlet](https://img.shields.io/badge/Servlet-v3.1-orange?style=for-the-badge)](https://jakarta.ee/specifications/servlet/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Apache Tomcat](https://img.shields.io/badge/Tomcat-F8DC75?style=for-the-badge&logo=apache-tomcat&logoColor=black)](https://tomcat.apache.org/)
+[![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)](https://maven.apache.org/)
 
 
 </div>
@@ -15,6 +18,7 @@
 
 ## Table of Contents
 - [Overview](#overview)
+- [Documentation](#documentation)
 - [Features](#features)
 - [System Architecture](#system-architecture)
 - [Tech Stack](#tech-stack)
@@ -28,8 +32,19 @@
 ## Overview
 **Project Management System** is a robust, enterprise-grade internal management tool designed to streamline team operations. It provides a centralized dashboard for tracking jobs, assigning tasks, and monitoring real-time progress across departments.
 
-
 This application replaces scattered spreadsheets with a unified, role-based system that improves data integrity and operational transparency.
+
+---
+
+## Documentation
+Additional technical documentation can be found in the [docs/](/docs) directory:
+
+- **[Project Overview](/docs/overview.md)**: Details the goals, features, and tech stack of the project.
+- **[System Architecture](/docs/architecture.md)**: Details the MVC request/response pipeline and class organization.
+- **[Database Schema](/docs/database-schema.md)**: Tables, attributes, types, constraints, and relationships.
+- **[API & Routes](/docs/api.md)**: Endpoint reference map detailing parameters, methods, and access permissions.
+- **[Environment Variables](/docs/env.md)**: Variable definitions for configuring database connections and Docker containers.
+- **[Roles & Permissions](/docs/roles-permissions.md)**: Details the access control matrix and developer guides.
 
 ---
 
@@ -129,30 +144,25 @@ The easiest and fastest way to build and run this application is using **Docker 
 ## Project Structure
 
 ```bash
-pms_app/  # Runtime artifactId/context-path
-├── 📂 database   # included sample database 
-│
-├── 📂 src/main/java/hdatuan   # Core Backend Logic
-│   ├── 📂 config              # DB Connections (MySQLConfig)
-│   ├── 📂 controller          # Servlets (Login, Task, User...)
-│   ├── 📂 entity              # POJOs (User, Role, Job, Task)
-│   ├── 📂 filter              # Auth Filters
-│   ├── 📂 repository          # JDBC Data Access
-│   └── 📂 service             # Business Logic Layer
-│
-├── 📂 src/main/resources      # Configuration files
-│   ├── db.properties          # Configure your database
-│   └── db.properties.example  # Example of db.properties
-│
-├── 📂 src/main/webapp         # Frontend Assets
-│   ├── 📂 bootstrap           # CSS Framework
-│   ├── 📂 css / js            # Custom Styles & Scripts
-│   ├── 📂 plugins             # 3rd Party Libs (Charts, Tables)
-│   └── 📂 WEB-INF             # Protected Configuration
-│       ├── 📂 views           # JSP View Templates (Protected)
-│       └── 📂 lib             # JAR Dependencies
-│
-└── 📄 README.md               # Project Documentation
+pms/
+├── 📂 database          # Seed SQL scripts for MySQL initialization
+├── 📂 docs              # Technical project documentation
+├── 📂 src/main/java/hdatuan   # Backend MVC source code
+│   ├── 📂 config        # Database connectivity config
+│   ├── 📂 controller    # HTTP Servlets handling routes
+│   ├── 📂 entity        # Data Transfer Models (POJOs)
+│   ├── 📂 filter        # Authentication & Authorization filters
+│   ├── 📂 repository    # JDBC CRUD Query classes
+│   └── 📂 service       # Core Business Logic layer
+├── 📂 src/main/resources # Application properties and resources
+├── 📂 src/main/webapp   # Frontend web templates & static resources
+│   ├── 📂 bootstrap     # Style framework files
+│   ├── 📂 css / js      # Layout styling & micro-animations logic
+│   ├── 📂 plugins       # Third-party visualization plugins (Morris.js)
+│   └── 📂 WEB-INF/views # JSP HTML layouts
+├── 📄 Dockerfile        # Multi-stage image packaging instructions
+├── 📄 docker-compose.yml # Service container orchestrations
+└── 📄 README.md         # Landing page and setup manual
 ```
 
 
