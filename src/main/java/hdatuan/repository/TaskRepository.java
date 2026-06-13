@@ -173,4 +173,42 @@ public class TaskRepository {
 		
 		return userTasks;
 		}
+
+	/**
+	 * Lấy tất cả tác vụ thuộc một dự án cụ thể, kèm thông tin user thực hiện và trạng thái.
+	 * Dùng để hiển thị chi tiết tiến độ dự án.
+	 */
+	public List<Task> findByJobId(int jobId) {
+		List<Task> taskList = new ArrayList<Task>();
+		String query = "SELECT t.id, t.name, u.fullname AS user_name, "
+				+ "t.start_date, t.end_date, s.name AS status_name, t.status_id, t.user_id "
+				+ "FROM tasks t "
+				+ "JOIN users u ON t.user_id = u.id "
+				+ "JOIN status s ON t.status_id = s.id "
+				+ "WHERE t.job_id = ? "
+				+ "ORDER BY t.user_id, t.id";
+		try (
+			Connection connection = MySQLConfig.getConnection();
+			PreparedStatement statement = connection.prepareStatement(query);
+		) {
+			statement.setInt(1, jobId);
+			try (ResultSet resultSet = statement.executeQuery()) {
+				while (resultSet.next()) {
+					Task task = new Task();
+					task.setId(resultSet.getInt("id"));
+					task.setName(resultSet.getString("name"));
+					task.setUser_name(resultSet.getString("user_name"));
+					task.setUser_id(resultSet.getInt("user_id"));
+					task.setStart_date(resultSet.getDate("start_date"));
+					task.setEnd_date(resultSet.getDate("end_date"));
+					task.setStatus_name(resultSet.getString("status_name"));
+					task.setStatus_id(resultSet.getInt("status_id"));
+					taskList.add(task);
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Error findByJobId: " + e.getMessage());
+		}
+		return taskList;
+	}
 }

@@ -41,7 +41,9 @@ public class AuthorizationFilter implements Filter {
             "/task-add",
             "/task-edit",
             "/groupwork-add",
-            "/groupwork-edit"
+            "/groupwork-edit",
+            "/groupwork-delete",
+            "/groupwork-details"
     ));
 
     @Override

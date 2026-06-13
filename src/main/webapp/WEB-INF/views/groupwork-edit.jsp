@@ -127,7 +127,7 @@
                     <div class="container-fluid">
                         <div class="row bg-title">
                             <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                                <h4 class="page-title">Thêm mới dự án</h4>
+                                <h4 class="page-title">Chỉnh sửa dự án</h4>
                             </div>
                         </div>
                         <!-- /.row -->
@@ -136,25 +136,28 @@
                             <div class="col-md-2 col-12"></div>
                             <div class="col-md-8 col-xs-12">
                                 <div class="white-box">
-                                    <form class="form-horizontal form-material" action="${ctx}/groupwork-add" method="post">
+                                    <form class="form-horizontal form-material" action="${ctx}/groupwork-edit" method="post">
+                                        <!-- Hidden field để gửi ID dự án cần chỉnh sửa -->
+                                        <input type="hidden" name="id" value="${editJob.id}">
                                         <div class="form-group">
                                             <label class="col-md-12">Tên dự án</label>
                                             <div class="col-md-12">
-                                                <input type="text" name="name" placeholder="Tên dự án"
+                                                <input type="text" name="name" value="${editJob.name}"
+                                                    placeholder="Tên dự án"
                                                     class="form-control form-control-line" required>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-12">Ngày bắt đầu</label>
                                             <div class="col-md-12">
-                                                <input type="date" name="start_date"
+                                                <input type="date" name="start_date" value="${editJob.start_date}"
                                                     class="form-control form-control-line" required>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-12">Ngày kết thúc</label>
                                             <div class="col-md-12">
-                                                <input type="date" name="end_date"
+                                                <input type="date" name="end_date" value="${editJob.end_date}"
                                                     class="form-control form-control-line" required>
                                             </div>
                                         </div>

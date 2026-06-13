@@ -134,10 +134,23 @@
 								<h4 class="page-title">Danh sách dự án</h4>
 							</div>
 							<div class="col-lg-9 col-sm-8 col-md-8 col-xs-12 text-right">
-								<a href="${ctx}/groupwork-add" class="btn btn-sm btn-success">Thêm mới</a>
+								<c:if test="${sessionScope.user.roleID == 1 || sessionScope.user.roleID == 2}">
+									<a href="${ctx}/groupwork-add" class="btn btn-sm btn-success">Thêm mới</a>
+								</c:if>
 							</div>
 							<!-- /.col-lg-12 -->
 						</div>
+						<!-- Flash Message -->
+						<c:if test="${not empty flashMessage}">
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="alert ${flashSuccess ? 'alert-success' : 'alert-danger'}" id="flashAlert">
+										${flashMessage}
+									</div>
+								</div>
+							</div>
+							<script>setTimeout(function(){ var el=document.getElementById('flashAlert'); if(el) el.style.display='none'; }, 3000);</script>
+						</c:if>
 						<!-- /row -->
 						<div class="row">
 							<div class="col-sm-12">
@@ -161,10 +174,12 @@
 														<td>${item.start_date}</td>
 														<td>${item.end_date}</td>
 														<td>
-															<a href="#" class="btn btn-sm btn-primary">Sửa</a>
-															<a href="#" class="btn btn-sm btn-danger">Xóa</a>
-															<a href="${ctx}/groupwork-details.html"
-																class="btn btn-sm btn-info">Xem</a>
+															<c:if test="${sessionScope.user.roleID == 1 || sessionScope.user.roleID == 2}">
+																<a href="${ctx}/groupwork-edit?id=${item.id}" class="btn btn-sm btn-primary">Sửa</a>
+																<a href="${ctx}/groupwork-delete?id=${item.id}" class="btn btn-sm btn-danger"
+																	onclick="return confirm('Xóa dự án này sẽ đồng thời xóa toàn bộ công việc thuộc dự án. Bạn có chắc chắn?')">Xóa</a>
+																<a href="${ctx}/groupwork-details?id=${item.id}" class="btn btn-sm btn-info">Xem</a>
+															</c:if>
 														</td>
 													</tr>
 												</c:forEach>

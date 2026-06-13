@@ -26,9 +26,12 @@ Tài liệu này đối chiếu và xác nhận trạng thái thực tế của 
 * **Chỉnh sửa thông tin**: Hoàn thiện qua [UserAddController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/UserAddController.java) (`/user-edit`). *(Trước đây tài liệu cũ bỏ sót tính năng này).*
 * **Xóa người dùng**: Hoàn thiện qua [UserController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/UserController.java) (`/user-delete`). *(Trước đây tài liệu cũ bỏ sót tính năng này).*
 
-### 4. Quản lý Dự án / Nhóm công việc (Job Management) - *Chưa hoàn thiện*
-* **Hiện trạng**: Chỉ mới hỗ trợ xem danh sách dự án qua [JobController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/JobController.java) (`/groupwork`).
-* **Thiếu sót**: Chưa có Servlet/Controller xử lý thêm/sửa/xóa dự án, mặc dù file giao diện [groupwork-add.jsp](file:///d:/WorkSpace/pms/src/main/webapp/WEB-INF/views/groupwork-add.jsp) đã được tạo sẵn và liên kết "Thêm mới" trên giao diện trỏ tới `/groupwork-add`.
+### 4. Quản lý Dự án / Nhóm công việc (Job Management) - *Đầy đủ CRUD & Chi tiết tiến độ*
+* **Xem danh sách**: Hoàn thiện qua [JobController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/JobController.java) (`/groupwork`). Phân quyền ẩn nút hành động đối với tài khoản nhân viên (Staff).
+* **Thêm dự án**: Hoàn thiện qua [JobController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/JobController.java) (`/groupwork-add`). Chỉ cho phép Admin/Manager.
+* **Chỉnh sửa dự án**: Hoàn thiện qua [JobController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/JobController.java) (`/groupwork-edit`). Chỉ cho phép Admin/Manager.
+* **Xóa dự án**: Hoàn thiện qua [JobController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/JobController.java) (`/groupwork-delete`). Tự động xóa các tác vụ (Tasks) liên quan trong một giao dịch (transaction cascade delete) để đảm bảo toàn vẹn dữ liệu. Chỉ cho phép Admin/Manager.
+* **Xem chi tiết tiến độ**: Hoàn thiện qua [JobController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/JobController.java) (`/groupwork-details`). Hiển thị biểu đồ phần trăm tiến độ động và danh sách công việc của từng nhân viên tham gia. Chỉ cho phép Admin/Manager.
 
 ### 5. Quản lý Tác vụ (Task Management) - *Chưa hoàn thiện*
 * **Hiện trạng**: Chỉ mới hỗ trợ xem danh sách tác vụ tổng quan qua [TaskController](file:///d:/WorkSpace/pms/src/main/java/hdatuan/controller/TaskController.java) (`/task`).
